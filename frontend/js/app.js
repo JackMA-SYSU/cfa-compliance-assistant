@@ -389,7 +389,7 @@
         await API.sendDeclaration({ name, declaration_id: id, subject, message: body });
         document.getElementById('d-send-status').innerHTML = '<div class="declare-box" style="background:#f0fdf9;border-color:var(--success)"><span class="declare-id">✅ 邮件已发送至合规部</span></div>';
       } catch (err) {
-        document.getElementById('d-send-status').innerHTML = `<div class="declare-box" style="background:#fef2f2;border-color:var(--danger)">⚠️ 自动发送失败（${esc(err.message)}），请改用下方"打开邮件客户端发送"</div>`;
+        document.getElementById('d-send-status').innerHTML = `<div class="declare-box" style="background:#fef2f2;border-color:var(--danger)">⚠️ 自动发送不可用（当前未连接后端服务）。请改用下方"打开邮件客户端发送"，或使用局域网演示地址访问。</div>`;
       } finally {
         btn.disabled = false;
         btn.textContent = '📧 一键发送邮件';
