@@ -163,6 +163,7 @@
         </div>
         ${r.category && r.category !== 'uncertain' ? `<div class="case-meta">行为类别：${esc(categoryName(r.category))} · 置信度 ${Math.round((r.confidence || 0) * 100)}%</div>` : ''}
         ${r.risk_reasoning ? `<div class="risk-reason">${esc(r.risk_reasoning)}</div>` : ''}
+        <div class="engine-badge ${r.offline === false ? 'ai' : 'local'}">${r.offline === false ? '🤖 基于 DeepSeek 大模型分析' : '📋 基于本地规则引擎分析'}</div>
       </div>
       ${r.network_error ? `<div class="advice" style="border-left:4px solid var(--warning)">⚠️ 后端不可用（${esc(r.network_error)}），已切换本地规则引擎</div>` : ''}
       <div class="section-title">涉及准则</div>
