@@ -34,5 +34,16 @@ const API = (() => {
     return res.json();
   }
 
-  return { analyze, health, sendDeclaration, setBaseUrl, getBaseUrl };
+  async function polish(behavior) {
+    const url = baseUrl ? `${baseUrl}/api/polish` : '/api/polish';
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ behavior }),
+    });
+    if (!res.ok) throw new Error(`转写失败 (${res.status})`);
+    return res.json();
+  }
+
+  return { analyze, health, sendDeclaration, polish, setBaseUrl, getBaseUrl };
 })();

@@ -63,3 +63,11 @@ class SendDeclarationRequest(BaseModel):
 class SendDeclarationResponse(BaseModel):
     sent: bool
     message: str = ""
+
+
+class PolishRequest(BaseModel):
+    behavior: str = Field(..., min_length=1, description="口语化行为描述")
+
+
+class PolishResponse(BaseModel):
+    polished: str = Field(..., description="改写后的正式申报语言")

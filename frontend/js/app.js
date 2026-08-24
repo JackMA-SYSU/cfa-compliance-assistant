@@ -103,6 +103,30 @@
     els.engineOptions.querySelectorAll('.engine-opt').forEach(b => b.classList.toggle('active', b === btn));
   });
 
+  /* 口语转正式申报语言 */
+  els.polishBtn = document.getElementById('polish-btn');
+  els.polishBtn.addEventListener('click', async () => {
+    const text = els.behavior.value.trim();
+    if (!text) { els.behavior.focus(); return; }
+    els.polishBtn.disabled = true;
+    els.polishBtn.textContent = '⏳';
+    try {
+      if (selectedEngine === 'local') {
+        els.behavior.value = localPolish(text);
+      } else {
+        try {
+          const r = await API.polish(text);
+          els.behavior.value = r.polished || localPolish(text);
+        } catch (e) {
+          els.behavior.value = localPolish(text);
+        }
+      }
+    } finally {
+      els.polishBtn.disabled = false;
+      els.polishBtn.textContent = '✍️';
+    }
+  });
+
   async function doAnalyze() {
     const text = els.behavior.value.trim();
     if (!text) { els.behavior.focus(); return; }

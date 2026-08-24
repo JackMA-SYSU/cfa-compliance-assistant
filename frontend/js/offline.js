@@ -112,9 +112,33 @@ function findSimilarCases(text, category) {
   }));
 }
 
+function localPolish(text) {
+  let t = String(text || '').trim().replace(/[。！!；;]+$/, '');
+  const rules = [
+    ['客户请我吃饭', '接受客户宴请'],
+    ['客户请我', '接受客户邀请'],
+    ['客户送我', '接受客户提供的'],
+    ['客户给我一笔钱', '接受客户支付的一笔报酬'],
+    ['客户给我奖金', '接受客户支付的奖金'],
+    ['客户给我', '接受客户提供的'],
+    ['给我一笔钱', '向我支付一笔报酬'],
+    ['给我奖金', '向我支付奖金'],
+    ['请客', '宴请招待'],
+    ['吃饭', '宴请'],
+    ['打高尔夫', '高尔夫活动'],
+    ['报销', '费用报销'],
+    ['送我', '向我提供'],
+    ['带我', '安排我'],
+    ['送我去', '安排我前往'],
+    ['承担', '由对方承担'],
+  ];
+  for (const [from, to] of rules) t = t.split(from).join(to);
+  if (t.startsWith('本人')) return t + '，特此申报。';
+  return '本人' + t + '，特此申报。';
+}
+
 function offlineAnalyze(text) {
-  const cls = offlineClassify(text);
-  const cat = cls.category;
+  const cls = offlineClassify(text);  const cat = cls.category;
   const codes = (CATEGORIES[cat] ? CATEGORIES[cat].standards : []);
   const standards = codes.map(c => {
     const [name, desc] = STANDARD_INFO[c] || [c, ''];

@@ -92,6 +92,8 @@ textarea:focus { border-color: var(--navy-700); box-shadow: 0 0 0 3px rgba(31, 5
   font-size: 17px; cursor: pointer; transition: transform .15s, background .2s;
 }
 .icon-btn:active { transform: scale(.92); background: var(--navy-700); }
+.icon-btn.polish-btn { right: 54px; background: var(--gold); }
+.icon-btn.polish-btn:active { background: #c9a227; }
 
 /* 快捷标签 */
 .quick-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
