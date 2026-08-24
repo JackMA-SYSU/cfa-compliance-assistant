@@ -20,7 +20,7 @@
   };
 
   let currentResult = null;
-  const EMAIL_TO = 'eric_han_music@petermail.com';
+  const EMAIL_TO = 'eric_han_music@petalmail.com';
 
   /* ---------- 工具 ---------- */
   function genId(prefix) {
