@@ -50,32 +50,34 @@ async def analyze(req: AnalyzeRequest, request: Request):
 
 @router.post("/send-declaration", response_model=SendDeclarationResponse)
 async def send_declaration(req: SendDeclarationRequest, request: Request):
-    """通过 Web3Forms 转发申报邮件（后端运行在有外网的机器上）"""
+    """通过 SMTP 发送申报邮件（默认 QQ 邮箱，国内无需翻墙）"""
     ip = request.client.host if request.client else "unknown"
     if _rate_limited(ip, 20):
         raise HTTPException(status_code=429, detail="请求过于频繁，请稍后再试")
 
-    if not config.WEB3FORMS_ACCESS_KEY:
-        raise HTTPException(status_code=500, detail="邮件服务未配置（缺少 WEB3FORMS_ACCESS_KEY）")
+    if not config.SMTP_PASSWORD:
+        raise HTTPException(status_code=500, detail="邮件服务未配置（缺少 SMTP_PASSWORD 授权码）")
 
-    import requests
+    import smtplib
+    from email.header import Header
+    from email.mime.text import MIMEText
+
+    msg = MIMEText(req.message, "plain", "utf-8")
+    msg["Subject"] = Header(req.subject, "utf-8")
+    msg["From"] = config.SMTP_FROM
+    msg["To"] = config.EMAIL_TO
+
     try:
-        resp = requests.post(
-            config.WEB3FORMS_URL,
-            json={
-                "access_key": config.WEB3FORMS_ACCESS_KEY,
-                "email": config.EMAIL_TO,
-                "subject": req.subject,
-                "message": req.message,
-                "from_name": req.name,
-            },
-            timeout=15,
-        )
+        if config.SMTP_PORT == 465:
+            server = smtplib.SMTP_SSL(config.SMTP_HOST, config.SMTP_PORT, timeout=15)
+        else:
+            server = smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT, timeout=15)
+            server.starttls()
+        server.login(config.SMTP_USER, config.SMTP_PASSWORD)
+        server.sendmail(config.SMTP_FROM, [config.EMAIL_TO], msg.as_string())
+        server.quit()
     except Exception as e:  # noqa: BLE001
-        logger.exception("邮件发送异常")
-        raise HTTPException(status_code=500, detail=f"邮件服务异常: {e}")
+        logger.exception("SMTP 发送异常")
+        raise HTTPException(status_code=502, detail=f"邮件发送失败: {e}")
 
-    if resp.status_code == 200:
-        return SendDeclarationResponse(sent=True, message=f"邮件已发送至 {config.EMAIL_TO}")
-    logger.warning("Web3Forms 返回 %s: %s", resp.status_code, resp.text[:200])
-    raise HTTPException(status_code=502, detail=f"邮件发送失败（{resp.status_code}）")
+    return SendDeclarationResponse(sent=True, message=f"邮件已发送至 {config.EMAIL_TO}")
