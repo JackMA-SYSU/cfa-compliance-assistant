@@ -32,6 +32,10 @@ window.CATEGORIES = {
     name: '利益冲突/持股/董事职务', standards: ['VI(A)', 'I(B)'],
     keywords: ['利益冲突','冲突','持股','持有股票','股权','股份','董事','董事会','关联方','关联交易','亲属','家人','配偶','朋友','供应商'],
   },
+  misconduct: {
+    name: '不当行为/专业失德', standards: ['I(D)'],
+    keywords: ['骂','辱骂','侮辱','威胁','恐吓','打架','斗殴','贿赂','行贿','受贿','欺诈','欺骗','舞弊','挪用','侵吞','侵占','盗用','骚扰','性骚扰','歧视','造假','做假','伪造','泄露隐私','泄漏隐私','粗口','飙脏话','不尊重'],
+  },
 };
 
 window.STANDARD_INFO = {
@@ -121,7 +125,7 @@ function offlineAnalyze(text) {
     text: (STANDARD_INFO[c] || [c, c])[1],
     required: true,
   }));
-  const isHigh = ['gift_entertainment', 'personal_trade', 'extra_compensation', 'mnpi'].includes(cat);
+  const isHigh = ['gift_entertainment', 'personal_trade', 'extra_compensation', 'mnpi', 'misconduct'].includes(cat);
   const risk = isHigh ? 'high' : (cat === 'uncertain' ? 'low' : 'mid');
   return {
     risk_level: risk,

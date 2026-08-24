@@ -36,6 +36,7 @@ CATEGORY_STANDARDS = {
     "research_integrity": ["V(A)", "V(B)", "I(C)"],
     "mnpi": ["II(A)"],
     "conflict_interest": ["VI(A)", "I(B)"],
+    "misconduct": ["I(D)"],
 }
 
 CATEGORY_NAMES = {
@@ -47,6 +48,7 @@ CATEGORY_NAMES = {
     "research_integrity": "研报/评级/虚假陈述",
     "mnpi": "内幕信息/泄密",
     "conflict_interest": "利益冲突/持股/董事职务",
+    "misconduct": "不当行为/专业失德",
 }
 
 RISK_LEVEL_TEXT = {
