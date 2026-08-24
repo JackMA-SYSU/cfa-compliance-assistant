@@ -5,7 +5,10 @@ import time
 
 from fastapi import APIRouter, Request, HTTPException
 
-from models.schemas import AnalyzeRequest, AnalyzeResponse
+import config
+from models.schemas import (
+    AnalyzeRequest, AnalyzeResponse, SendDeclarationRequest, SendDeclarationResponse,
+)
 
 logger = logging.getLogger("compliance")
 router = APIRouter(prefix="/api", tags=["compliance"])
@@ -43,3 +46,36 @@ async def analyze(req: AnalyzeRequest, request: Request):
         raise HTTPException(status_code=500, detail=f"分析服务异常: {e}")
 
     return result
+
+
+@router.post("/send-declaration", response_model=SendDeclarationResponse)
+async def send_declaration(req: SendDeclarationRequest, request: Request):
+    """通过 Web3Forms 转发申报邮件（后端运行在有外网的机器上）"""
+    ip = request.client.host if request.client else "unknown"
+    if _rate_limited(ip, 20):
+        raise HTTPException(status_code=429, detail="请求过于频繁，请稍后再试")
+
+    if not config.WEB3FORMS_ACCESS_KEY:
+        raise HTTPException(status_code=500, detail="邮件服务未配置（缺少 WEB3FORMS_ACCESS_KEY）")
+
+    import requests
+    try:
+        resp = requests.post(
+            config.WEB3FORMS_URL,
+            json={
+                "access_key": config.WEB3FORMS_ACCESS_KEY,
+                "email": config.EMAIL_TO,
+                "subject": req.subject,
+                "message": req.message,
+                "from_name": req.name,
+            },
+            timeout=15,
+        )
+    except Exception as e:  # noqa: BLE001
+        logger.exception("邮件发送异常")
+        raise HTTPException(status_code=500, detail=f"邮件服务异常: {e}")
+
+    if resp.status_code == 200:
+        return SendDeclarationResponse(sent=True, message=f"邮件已发送至 {config.EMAIL_TO}")
+    logger.warning("Web3Forms 返回 %s: %s", resp.status_code, resp.text[:200])
+    raise HTTPException(status_code=502, detail=f"邮件发送失败（{resp.status_code}）")

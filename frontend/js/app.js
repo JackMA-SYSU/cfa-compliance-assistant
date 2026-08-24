@@ -101,13 +101,12 @@
     renderSkeleton();
 
     let result;
-    if (API.getBaseUrl() && navigator.onLine) {
+    if (navigator.onLine) {
       try {
         result = await API.analyze(text);
       } catch (err) {
         // 后端不可达时回退本地
         result = offlineAnalyze(text);
-        result.network_error = err.message;
       }
     } else {
       result = offlineAnalyze(text);
@@ -365,8 +364,8 @@
     if (actions) parts.push('', '【拟采取的合规动作】', actions);
     parts.push('', '请合规部门审阅并留存记录。如需进一步信息，请与本人联系。', '', '此致 敬礼', name, time);
     const body = parts.join('\n');
-
-    const mailto = `mailto:${EMAIL_TO}?subject=${encodeURIComponent(`【合规申报】${name} - ${id}`)}&body=${encodeURIComponent(body)}`;
+    const subject = `【合规申报】${name} - ${id}`;
+    const mailto = `mailto:${EMAIL_TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     document.getElementById('d-result').innerHTML = `
       <div class="declare-box">
@@ -376,9 +375,27 @@
         发送至：${esc(EMAIL_TO)}
       </div>
       <div class="declare-actions">
-        <a class="primary-btn" href="${mailto}" style="text-decoration:none;text-align:center;display:block">📧 打开邮件客户端发送</a>
+        <button class="primary-btn" id="d-send">📧 一键发送邮件</button>
+        <a class="secondary-btn" href="${mailto}" style="text-decoration:none;text-align:center;display:block">📨 打开邮件客户端发送（备用）</a>
         <button class="secondary-btn" id="d-copy">复制邮件内容</button>
-      </div>`;
+      </div>
+      <div id="d-send-status"></div>`;
+
+    document.getElementById('d-send').addEventListener('click', async () => {
+      const btn = document.getElementById('d-send');
+      btn.disabled = true;
+      btn.textContent = '发送中...';
+      try {
+        await API.sendDeclaration({ name, declaration_id: id, subject, message: body });
+        document.getElementById('d-send-status').innerHTML = '<div class="declare-box" style="background:#f0fdf9;border-color:var(--success)"><span class="declare-id">✅ 邮件已发送至合规部</span></div>';
+      } catch (err) {
+        document.getElementById('d-send-status').innerHTML = `<div class="declare-box" style="background:#fef2f2;border-color:var(--danger)">⚠️ 自动发送失败（${esc(err.message)}），请改用下方"打开邮件客户端发送"</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '📧 一键发送邮件';
+      }
+    });
+
     document.getElementById('d-copy').addEventListener('click', () => {
       navigator.clipboard.writeText(body).then(() => document.getElementById('d-copy').textContent = '已复制 ✓');
     });

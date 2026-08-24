@@ -38,3 +38,8 @@ RATE_LIMIT_PER_MINUTE = int(os.environ.get("RATE_LIMIT_PER_MINUTE", "20"))
 
 # CORS 白名单（逗号分隔）
 CORS_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "*").split(",") if o.strip()]
+
+# 邮件申报（通过 Web3Forms 转发，需配置访问密钥）
+EMAIL_TO = os.environ.get("EMAIL_TO", "eric_han_music@petalmail.com")
+WEB3FORMS_ACCESS_KEY = os.environ.get("WEB3FORMS_ACCESS_KEY", "")
+WEB3FORMS_URL = "https://api.web3forms.com/submit"

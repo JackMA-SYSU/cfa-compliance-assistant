@@ -51,3 +51,15 @@ class HealthResponse(BaseModel):
     version: str
     corpus_size: int = 0
     embedding: str = "tfidf"
+
+
+class SendDeclarationRequest(BaseModel):
+    name: str = Field(..., description="申报人姓名")
+    declaration_id: str = Field(..., description="申报编号")
+    subject: str = Field(..., description="邮件主题")
+    message: str = Field(..., description="邮件正文")
+
+
+class SendDeclarationResponse(BaseModel):
+    sent: bool
+    message: str = ""

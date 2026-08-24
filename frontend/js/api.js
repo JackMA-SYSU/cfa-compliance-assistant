@@ -23,5 +23,16 @@ const API = (() => {
     return res.ok ? res.json() : null;
   }
 
-  return { analyze, health, setBaseUrl, getBaseUrl };
+  async function sendDeclaration(payload) {
+    const url = baseUrl ? `${baseUrl}/api/send-declaration` : '/api/send-declaration';
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`发送失败 (${res.status})`);
+    return res.json();
+  }
+
+  return { analyze, health, sendDeclaration, setBaseUrl, getBaseUrl };
 })();
