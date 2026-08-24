@@ -1,0 +1,28 @@
+# 明天开机备忘（合规自检助手）
+
+## 要录制/演示（要 DeepSeek + 发邮件）
+1. 双击：D:\cfa-compliance-assistant\启动演示.bat
+2. 浏览器打开：http://localhost:8000
+3. 开始录制/演示
+
+## 要评委手机扫码访问
+1. 手机开「个人热点」
+2. 电脑连上这个热点
+3. 双击：D:\cfa-compliance-assistant\启动演示.bat
+4. 打开生成的二维码：D:\cfa-compliance-assistant\demo_qr.png
+5. 评委手机连同一热点 → 扫码
+
+## 只是看线上网站（无需启动任何东西）
+https://jackma-sysu.github.io/cfa-compliance-assistant/
+
+## 继续让 AI 改代码
+- 双击：D:\cfa-compliance-assistant\继续开发_桌面版.bat （图形软件）
+- 或双击：D:\cfa-compliance-assistant\继续开发_终端版.bat （命令行，能续接对话）
+
+## 关键文件位置
+- 项目：D:\cfa-compliance-assistant\
+- 报告PDF：商策报告_暑假不回家队.pdf
+- PPT：商策PPT_暑假不回家队.pptx
+- 讲解词：演示讲解词.md
+- 问答：评委问答准备.md
+- 密钥(别上传)：.env
