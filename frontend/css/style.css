@@ -212,6 +212,12 @@ textarea:focus { border-color: var(--navy-700); box-shadow: 0 0 0 3px rgba(31, 5
   padding: 2px 10px; border-radius: 12px; border: 1px solid #dbe3f5;
 }
 .std-count { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.std-group {
+  font-size: 14px; font-weight: 800; color: #fff;
+  margin: 16px 0 10px; padding: 6px 16px;
+  background: linear-gradient(135deg, var(--navy-800), var(--navy-700));
+  border-radius: 8px; display: inline-block; letter-spacing: .5px;
+}
 
 /* 历史页 */
 .history-actions { display: flex; gap: 10px; margin-bottom: 14px; }

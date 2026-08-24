@@ -301,26 +301,39 @@
   function renderStandards(filter) {
     const f = (filter || '').trim().toLowerCase();
     const entries = Object.entries(window.STANDARD_INFO || {});
-    const matched = [];
-    const html = entries
-      .map(([code, info]) => {
+    const order = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+    const groups = {};
+    order.forEach(g => { groups[g] = []; });
+    entries.forEach(([code, info]) => {
+      const major = code.split('(')[0];
+      if (groups[major]) groups[major].push([code, info]);
+    });
+    let html = '';
+    let count = 0;
+    order.forEach(g => {
+      const items = groups[g];
+      if (!items || !items.length) return;
+      const cards = items.map(([code, info]) => {
         const name = info[0] || '';
         const desc = info[1] || '';
         const aliases = (info[2] || '').split(/[\s,、]+/).filter(Boolean);
         const hay = (code + ' ' + name + ' ' + desc + ' ' + aliases.join(' ')).toLowerCase();
         if (f && !hay.includes(f)) return '';
-        matched.push(code);
+        count++;
         const tags = aliases.map(a => `<span class="std-tag">${esc(a)}</span>`).join('');
-        return `<details class="std-card"${f ? ' open' : ''}>
-          <summary>${esc(code)} · ${esc(name)}</summary>
+        return `<div class="std-item">
+          <div><span class="std-code">${esc(code)}</span><span class="std-name">${esc(name)}</span></div>
           <div class="std-desc">${esc(desc)}</div>
-          ${tags ? `<div class="std-tags">${tags}</div>` : ''}
-        </details>`;
+          <div class="std-tags">${tags}</div>
+        </div>`;
       }).join('');
-    const count = matched.length
-      ? `<div class="std-count">共 ${matched.length} 条准则</div>`
-      : (f ? '<div class="empty">无匹配准则，试试「收礼」「内幕」「额外报酬」等关键词</div>' : '');
-    els.standardsList.innerHTML = count + html;
+      if (cards) html += `<div class="std-group">Standard ${g}</div>${cards}`;
+    });
+    const countHtml = f
+      ? `<div class="std-count">找到 ${count} 条相关准则</div>`
+      : `<div class="std-count">共 22 条准则，按 Standard 分组</div>`;
+    els.standardsList.innerHTML = (count ? countHtml : '') + html
+      || '<div class="empty">无匹配准则，试试「收礼」「内幕」「额外报酬」等关键词</div>';
   }
   els.stdSearch.addEventListener('input', () => renderStandards(els.stdSearch.value));
 
