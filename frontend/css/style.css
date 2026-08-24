@@ -201,3 +201,57 @@ textarea:focus { border-color: var(--blue); }
 @media (min-width: 640px) {
   .view { max-width: 640px; margin: 0 auto; }
 }
+
+/* ===== 风险拦截横幅 ===== */
+.intercept-banner {
+  background: linear-gradient(135deg, #7f1d1d, var(--danger));
+  color: #fff; border-radius: var(--radius); padding: 16px;
+  box-shadow: var(--shadow); animation: dangerPulse 1.2s ease-out 1;
+}
+.intercept-title { font-size: 17px; font-weight: 800; }
+.intercept-body { font-size: 14px; margin-top: 6px; opacity: .95; }
+
+/* ===== 结果操作按钮 ===== */
+.result-actions { display: grid; gap: 10px; margin-top: 4px; }
+
+/* ===== 弹窗 ===== */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200; background: rgba(26,26,46,.55);
+  display: flex; align-items: flex-end; justify-content: center;
+  padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom));
+}
+.modal-overlay[hidden] { display: none; }
+.modal-card {
+  background: #fff; border-radius: 16px; width: 100%; max-width: 520px;
+  max-height: 88vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 18px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff;
+}
+.modal-head h2 { font-size: 17px; }
+.modal-close { border: none; background: none; font-size: 26px; line-height: 1; color: var(--muted); cursor: pointer; }
+.modal-body { padding: 16px 18px; }
+.form-input {
+  width: 100%; min-height: 44px; border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; font-size: 16px; font-family: var(--font); margin-bottom: 14px; outline: none;
+}
+textarea.form-input { min-height: 72px; resize: vertical; }
+.form-input:focus { border-color: var(--blue); }
+.form-input[readonly] { background: #f3f4f6; color: var(--muted); }
+.modal-body .field-label { margin-bottom: 4px; }
+
+/* 申报/自证结果 */
+.declare-result { margin-top: 14px; }
+.declare-box {
+  background: #f0fdf9; border: 1px solid var(--success); border-radius: 10px;
+  padding: 14px; font-size: 13px; white-space: pre-wrap; word-break: break-all;
+}
+.declare-id { font-weight: 700; color: var(--success); }
+.declare-actions { display: grid; gap: 8px; margin-top: 12px; }
+.official-doc {
+  background: #fff; border: 1.5px solid var(--navy); border-radius: 10px;
+  padding: 18px; font-size: 14px; line-height: 1.8; white-space: pre-wrap;
+}

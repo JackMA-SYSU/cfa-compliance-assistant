@@ -20,6 +20,31 @@
   };
 
   let currentResult = null;
+  const EMAIL_TO = 'eric_han_music@petermail.com';
+
+  /* ---------- 工具 ---------- */
+  function genId(prefix) {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const ymd = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+    const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+    return `${prefix}-${ymd}-${rand}`;
+  }
+  function nowText() {
+    return new Date().toLocaleString('zh-CN', { hour12: false });
+  }
+  function openModal(id) {
+    document.getElementById(id).hidden = false;
+  }
+  function closeModal(id) {
+    document.getElementById(id).hidden = true;
+  }
+  document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', () => closeModal(btn.dataset.close));
+  });
+  document.querySelectorAll('.modal-overlay').forEach(ov => {
+    ov.addEventListener('click', (e) => { if (e.target === ov) ov.hidden = true; });
+  });
 
   /* ---------- 视图切换 ---------- */
   els.tabs.forEach(tab => {
@@ -123,7 +148,14 @@
         <div class="case-summary">${esc((c.summary || '').slice(0, 100))}</div>
       </div>`).join('');
 
+    const interceptHtml = risk === 'high' ? `
+      <div class="intercept-banner">
+        <div class="intercept-title">🚫 合规风险拦截</div>
+        <div class="intercept-body">检测到该行为存在明显越界风险，请立即停止相关安排，并完成合规申报以留存记录。</div>
+      </div>` : '';
+
     els.resultArea.innerHTML = `
+      ${interceptHtml}
       <div class="risk-card ${risk}">
         <div class="risk-head">
           <span class="risk-level">${riskText(risk)}</span>
@@ -140,6 +172,11 @@
       ${r.action_advice ? `<div class="section-title">操作建议</div><div class="advice">${esc(r.action_advice)}</div>` : ''}
       ${r.disclosure_draft ? `<div class="section-title">披露草稿</div><div class="disclosure">${esc(r.disclosure_draft)}<br><button class="copy-btn">复制披露草稿</button></div>` : ''}
       ${casesHtml ? `<div class="section-title">类似题库案例</div>${casesHtml}` : ''}
+      <div class="section-title">合规行动</div>
+      <div class="result-actions">
+        <button class="primary-btn" id="declare-btn">📩 前往申报（提交申报单）</button>
+        <button class="secondary-btn" id="proof-btn">📄 生成合规自证声明</button>
+      </div>
     `;
 
     // 清单勾选交互
@@ -150,6 +187,12 @@
     if (copyBtn) copyBtn.addEventListener('click', () => {
       navigator.clipboard.writeText(r.disclosure_draft).then(() => copyBtn.textContent = '已复制 ✓');
     });
+
+    // 申报 / 自证 按钮
+    const declareBtn = els.resultArea.querySelector('#declare-btn');
+    if (declareBtn) declareBtn.addEventListener('click', () => openDeclare(r));
+    const proofBtn = els.resultArea.querySelector('#proof-btn');
+    if (proofBtn) proofBtn.addEventListener('click', () => openProof(r));
 
     // 保存到历史
     saveToHistory(r);
@@ -282,6 +325,106 @@
   }
   function categoryName(c) {
     return (window.CATEGORIES && window.CATEGORIES[c] && window.CATEGORIES[c].name) || c;
+  }
+
+  /* ---------- 合规申报 ---------- */
+  function openDeclare(r) {
+    document.getElementById('d-behavior').value = els.behavior.value.trim();
+    document.getElementById('d-standards').value = (r.standards || []).map(s => s.code).join('、') || '未命中';
+    document.getElementById('d-risk').value = riskText(r.risk_level || 'mid');
+    document.getElementById('d-result').innerHTML = '';
+    openModal('declare-modal');
+  }
+
+  document.getElementById('d-submit').addEventListener('click', submitDeclare);
+
+  function submitDeclare() {
+    const name = document.getElementById('d-name').value.trim();
+    const dept = document.getElementById('d-dept').value.trim();
+    const behavior = document.getElementById('d-behavior').value.trim();
+    const standards = document.getElementById('d-standards').value.trim();
+    const risk = document.getElementById('d-risk').value.trim();
+    const note = document.getElementById('d-note').value.trim();
+    if (!name) { alert('请填写姓名'); return; }
+    if (!behavior) { alert('缺少行为描述'); return; }
+
+    const id = genId('SB');
+    const time = nowText();
+    const actions = (currentResult && currentResult.checklist || []).map(c => c.text).join('；');
+
+    const parts = [
+      '致合规部门：', '',
+      `本人 ${name}（${dept || '未填写部门'}）现就以下事项进行合规申报：`, '',
+      `申报编号：${id}`,
+      `申报时间：${time}`,
+      `风险等级：${risk}`,
+      `涉及准则：${standards}`, '',
+      '【行为描述】', behavior,
+    ];
+    if (note) parts.push('', '【补充说明】', note);
+    if (actions) parts.push('', '【拟采取的合规动作】', actions);
+    parts.push('', '请合规部门审阅并留存记录。如需进一步信息，请与本人联系。', '', '此致 敬礼', name, time);
+    const body = parts.join('\n');
+
+    const mailto = `mailto:${EMAIL_TO}?subject=${encodeURIComponent(`【合规申报】${name} - ${id}`)}&body=${encodeURIComponent(body)}`;
+
+    document.getElementById('d-result').innerHTML = `
+      <div class="declare-box">
+        <span class="declare-id">✅ 申报单已生成</span><br>
+        申报编号：<strong>${esc(id)}</strong><br>
+        申报时间：${esc(time)}<br>
+        发送至：${esc(EMAIL_TO)}
+      </div>
+      <div class="declare-actions">
+        <a class="primary-btn" href="${mailto}" style="text-decoration:none;text-align:center;display:block">📧 打开邮件客户端发送</a>
+        <button class="secondary-btn" id="d-copy">复制邮件内容</button>
+      </div>`;
+    document.getElementById('d-copy').addEventListener('click', () => {
+      navigator.clipboard.writeText(body).then(() => document.getElementById('d-copy').textContent = '已复制 ✓');
+    });
+  }
+
+  /* ---------- 合规自证 ---------- */
+  function openProof(r) {
+    document.getElementById('p-result').innerHTML = '';
+    openModal('proof-modal');
+  }
+
+  document.getElementById('p-generate').addEventListener('click', generateProof);
+
+  function generateProof() {
+    const name = document.getElementById('p-name').value.trim();
+    const matter = document.getElementById('p-matter').value.trim();
+    if (!name) { alert('请填写声明人姓名'); return; }
+    if (!matter) { alert('请填写声明事项'); return; }
+
+    const id = genId('ZM');
+    const time = nowText();
+    const doc = [
+      '合规自证声明', '',
+      `声明编号：${id}`, '',
+      `本人 ${name}，现就以下事项作出正式声明：`, '',
+      '【声明事项】', matter, '',
+      '本人郑重声明：在上述事项中，本人已尽到应有的合规义务，并已于相关行为发生前向有关方面完成了必要的披露与申报。如后续因该事项产生任何合规争议，本声明可作为本人诚信履责的书面凭证。', '',
+      `声明人（签字）：${name}`,
+      `声明时间：${time}`,
+    ].join('\n');
+
+    document.getElementById('p-result').innerHTML = `
+      <div class="official-doc">${esc(doc)}</div>
+      <div class="declare-actions">
+        <button class="secondary-btn" id="p-copy">复制声明内容</button>
+        <button class="primary-btn" id="p-print">打印 / 导出 PDF</button>
+      </div>`;
+    document.getElementById('p-copy').addEventListener('click', () => {
+      navigator.clipboard.writeText(doc).then(() => document.getElementById('p-copy').textContent = '已复制 ✓');
+    });
+    document.getElementById('p-print').addEventListener('click', () => {
+      const w = window.open('', '_blank');
+      w.document.write(`<html><head><meta charset="utf-8"><title>合规自证声明</title><style>body{font-family:sans-serif;max-width:620px;margin:40px auto;line-height:2;white-space:pre-wrap}</style></head><body>${esc(doc)}</body></html>`);
+      w.document.close();
+      w.print();
+    });
   }
 
   /* ---------- 初始化 ---------- */

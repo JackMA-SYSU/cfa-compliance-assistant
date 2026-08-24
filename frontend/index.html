@@ -78,6 +78,50 @@
     <button class="tab" data-view="history" role="tab" aria-selected="false">🕘 记录</button>
   </nav>
 
+  <!-- ===== 合规申报弹窗 ===== -->
+  <div id="declare-modal" class="modal-overlay" hidden role="dialog" aria-label="合规申报">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2>合规申报</h2>
+        <button class="modal-close" data-close="declare-modal" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <label class="field-label" for="d-name">姓名</label>
+        <input id="d-name" class="form-input" placeholder="你的姓名" />
+        <label class="field-label" for="d-dept">部门/机构</label>
+        <input id="d-dept" class="form-input" placeholder="所在部门或机构" />
+        <label class="field-label" for="d-behavior">行为描述</label>
+        <textarea id="d-behavior" class="form-input" rows="3" readonly></textarea>
+        <label class="field-label" for="d-standards">涉及准则</label>
+        <input id="d-standards" class="form-input" readonly />
+        <label class="field-label" for="d-risk">风险等级</label>
+        <input id="d-risk" class="form-input" readonly />
+        <label class="field-label" for="d-note">补充说明（可选）</label>
+        <textarea id="d-note" class="form-input" rows="3" placeholder="补充申报事项的背景或细节"></textarea>
+        <button id="d-submit" class="primary-btn">提交申报并生成邮件</button>
+        <div id="d-result" class="declare-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 合规自证弹窗 ===== -->
+  <div id="proof-modal" class="modal-overlay" hidden role="dialog" aria-label="合规自证声明">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2>合规自证声明</h2>
+        <button class="modal-close" data-close="proof-modal" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <label class="field-label" for="p-name">声明人姓名</label>
+        <input id="p-name" class="form-input" placeholder="你的姓名" />
+        <label class="field-label" for="p-matter">声明事项</label>
+        <textarea id="p-matter" class="form-input" rows="4" placeholder="例如：本人已在相关事项发生前向合规部门完成披露，此事与本人无关"></textarea>
+        <button id="p-generate" class="primary-btn">生成正式声明</button>
+        <div id="p-result" class="declare-result"></div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/storage.js"></script>
   <script src="js/cases.js"></script>
   <script src="js/offline.js"></script>
