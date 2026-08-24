@@ -1,6 +1,6 @@
 {
-  "name": "CFA 道德合规 AI 自检助手",
-  "short_name": "CFA合规自检",
+  "name": "合规自检助手",
+  "short_name": "合规自检",
   "description": "输入行为描述，自动识别CFA道德准则、评估风险、生成披露清单",
   "start_url": "./index.html",
   "scope": "./",

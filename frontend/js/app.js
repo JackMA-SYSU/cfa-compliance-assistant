@@ -301,17 +301,26 @@
   function renderStandards(filter) {
     const f = (filter || '').trim().toLowerCase();
     const entries = Object.entries(window.STANDARD_INFO || {});
+    const matched = [];
     const html = entries
       .map(([code, info]) => {
-        const [name, desc] = info;
-        const hay = (code + name + desc).toLowerCase();
+        const name = info[0] || '';
+        const desc = info[1] || '';
+        const aliases = (info[2] || '').split(/[\s,、]+/).filter(Boolean);
+        const hay = (code + ' ' + name + ' ' + desc + ' ' + aliases.join(' ')).toLowerCase();
         if (f && !hay.includes(f)) return '';
-        return `<details class="std-card">
-          <summary>${code} · ${name}</summary>
-          <div class="std-desc">${desc}</div>
+        matched.push(code);
+        const tags = aliases.map(a => `<span class="std-tag">${esc(a)}</span>`).join('');
+        return `<details class="std-card"${f ? ' open' : ''}>
+          <summary>${esc(code)} · ${esc(name)}</summary>
+          <div class="std-desc">${esc(desc)}</div>
+          ${tags ? `<div class="std-tags">${tags}</div>` : ''}
         </details>`;
       }).join('');
-    els.standardsList.innerHTML = html || '<div class="empty">无匹配准则</div>';
+    const count = matched.length
+      ? `<div class="std-count">共 ${matched.length} 条准则</div>`
+      : (f ? '<div class="empty">无匹配准则，试试「收礼」「内幕」「额外报酬」等关键词</div>' : '');
+    els.standardsList.innerHTML = count + html;
   }
   els.stdSearch.addEventListener('input', () => renderStandards(els.stdSearch.value));
 
