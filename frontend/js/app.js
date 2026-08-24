@@ -12,6 +12,7 @@
     resultArea: document.getElementById('result-area'),
     stdSearch: document.getElementById('std-search'),
     standardsList: document.getElementById('standards-list'),
+    stdHints: document.getElementById('std-hints'),
     historyList: document.getElementById('history-list'),
     exportBtn: document.getElementById('export-btn'),
     clearBtn: document.getElementById('clear-history-btn'),
@@ -336,6 +337,23 @@
       || '<div class="empty">无匹配准则，试试「收礼」「内幕」「额外报酬」等关键词</div>';
   }
   els.stdSearch.addEventListener('input', () => renderStandards(els.stdSearch.value));
+
+  /* 可搜关键词提示（可点击直接搜索） */
+  const HINT_KEYWORDS = [
+    '收礼', '送礼', '招待', '差旅', '内幕', '泄密', '额外报酬', '介绍费',
+    '兼职', '离职', '持股', '董事', '研报', '虚假陈述', '个人交易', '抢先', '保密',
+  ];
+  function renderHints() {
+    els.stdHints.innerHTML = '<span class="std-hint-tip">可搜关键词：</span>' +
+      HINT_KEYWORDS.map(kw => `<button class="std-hint" data-kw="${kw}">${kw}</button>`).join('');
+  }
+  els.stdHints.addEventListener('click', (e) => {
+    const btn = e.target.closest('.std-hint');
+    if (!btn) return;
+    els.stdSearch.value = btn.dataset.kw;
+    renderStandards(btn.dataset.kw);
+  });
+  renderHints();
 
   /* ---------- 工具 ---------- */
   function esc(s) {

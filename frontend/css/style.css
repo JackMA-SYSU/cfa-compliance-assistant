@@ -218,6 +218,14 @@ textarea:focus { border-color: var(--navy-700); box-shadow: 0 0 0 3px rgba(31, 5
   background: linear-gradient(135deg, var(--navy-800), var(--navy-700));
   border-radius: 8px; display: inline-block; letter-spacing: .5px;
 }
+.std-hints { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.std-hint-tip { font-size: 12px; color: var(--muted); }
+.std-hint {
+  font-size: 12px; color: var(--navy-700); background: #fff;
+  padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border);
+  cursor: pointer; transition: all .15s; font-family: var(--font);
+}
+.std-hint:hover { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
 
 /* 历史页 */
 .history-actions { display: flex; gap: 10px; margin-bottom: 14px; }
