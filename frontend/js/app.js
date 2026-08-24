@@ -92,6 +92,17 @@
 
   /* ---------- 分析流程 ---------- */
   els.analyzeBtn.addEventListener('click', doAnalyze);
+
+  /* 分析引擎选择：auto / deepseek / local */
+  let selectedEngine = 'auto';
+  els.engineOptions = document.getElementById('engine-options');
+  els.engineOptions.addEventListener('click', (e) => {
+    const btn = e.target.closest('.engine-opt');
+    if (!btn) return;
+    selectedEngine = btn.dataset.engine;
+    els.engineOptions.querySelectorAll('.engine-opt').forEach(b => b.classList.toggle('active', b === btn));
+  });
+
   async function doAnalyze() {
     const text = els.behavior.value.trim();
     if (!text) { els.behavior.focus(); return; }
@@ -102,15 +113,28 @@
     renderSkeleton();
 
     let result;
-    if (navigator.onLine) {
+    if (selectedEngine === 'local') {
+      // 强制本地规则引擎（浏览器内，不调后端）
+      result = offlineAnalyze(text);
+    } else if (selectedEngine === 'deepseek') {
+      // 强制 DeepSeek（后端大模型）
       try {
         result = await API.analyze(text);
       } catch (err) {
-        // 后端不可达时回退本地
         result = offlineAnalyze(text);
+        result.network_error = 'DeepSeek 后端不可用，已临时回退本地规则引擎';
       }
     } else {
-      result = offlineAnalyze(text);
+      // 自动：后端可用则用 DeepSeek，否则本地
+      if (navigator.onLine) {
+        try {
+          result = await API.analyze(text);
+        } catch (err) {
+          result = offlineAnalyze(text);
+        }
+      } else {
+        result = offlineAnalyze(text);
+      }
     }
 
     currentResult = result;
