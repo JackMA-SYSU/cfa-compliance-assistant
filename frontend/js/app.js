@@ -76,17 +76,16 @@
     renderSkeleton();
 
     let result;
-    try {
-      if (navigator.onLine) {
+    if (API.getBaseUrl() && navigator.onLine) {
+      try {
         result = await API.analyze(text);
-      } else {
+      } catch (err) {
+        // 后端不可达时回退本地
         result = offlineAnalyze(text);
-        await enqueuePending(text);
+        result.network_error = err.message;
       }
-    } catch (err) {
-      // 后端不可达时回退本地
+    } else {
       result = offlineAnalyze(text);
-      result.network_error = err.message;
     }
 
     currentResult = result;

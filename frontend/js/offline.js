@@ -74,6 +74,40 @@ function offlineClassify(text) {
   };
 }
 
+function charBigrams(s) {
+  const clean = String(s || '').replace(/\s+/g, '');
+  const set = new Set();
+  for (let i = 0; i < clean.length - 1; i++) set.add(clean.slice(i, i + 2));
+  return set;
+}
+
+function bigramOverlap(a, b) {
+  const A = charBigrams(a), B = charBigrams(b);
+  if (!A.size || !B.size) return 0;
+  let n = 0;
+  for (const x of A) if (B.has(x)) n++;
+  return n / Math.min(A.size, B.size);
+}
+
+function findSimilarCases(text, category) {
+  const cases = window.CASES || [];
+  if (!cases.length) return [];
+  const scored = cases.map(c => {
+    let score = 0;
+    if ((c.behavior_tags || []).includes(category)) score += 3;
+    score += bigramOverlap(text, c.summary) * 5;
+    return { c, score };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, 3).map(s => ({
+    question_id: s.c.id,
+    similarity: Math.min(0.95, 0.3 + s.score * 0.08),
+    risk_level: s.c.risk_level,
+    standard_code: s.c.standard_code,
+    summary: s.c.summary,
+  }));
+}
+
 function offlineAnalyze(text) {
   const cls = offlineClassify(text);
   const cat = cls.category;
@@ -99,7 +133,7 @@ function offlineAnalyze(text) {
     action_advice: (risk === 'high' ? '该行为风险较高，请在接受任何利益前完成披露与审批。' : '请按清单履行披露与审慎义务。') + '；' + checklist.map(c => c.text).join('；') + '。',
     disclosure_draft: risk === 'low' ? '' : `致合规部门：\n本人就以下事项主动披露：${text}\n\n可能涉及准则：${codes.join('、')}\n\n特此披露，请审查。`,
     risk_reasoning: risk === 'high' ? '高风险：涉及需书面披露或事先同意的事项' : risk === 'mid' ? '中风险：需履行披露或审慎义务' : '低风险：常规执业行为',
-    referenced_cases: [],
+    referenced_cases: findSimilarCases(text, cat),
     offline: true,
     processing_time_ms: 0,
   };
