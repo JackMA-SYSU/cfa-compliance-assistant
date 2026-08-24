@@ -70,7 +70,8 @@ D:\cfa-compliance-assistant\
 ├── Dockerfile / render.yaml / vercel.json
 ├── .env                           # 本地密钥（已 gitignore，勿删）
 ├── 启动演示.bat                    # 双击启动局域网演示
-├── 继续开发.bat                    # 双击打开 AI 助手续聊
+├── 继续开发_终端版.bat              # 双击打开 AI 助手（cmd终端版，opencode -c 续接）
+├── 继续开发_桌面版.bat              # 双击打开 AI 助手（图形软件版，OpenCode.exe）
 └── report.md                      # 商策报告（6760 字）
 ```
 
