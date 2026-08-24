@@ -11,6 +11,7 @@
     4. 评委手机连接同一热点，扫码访问 http://<电脑IP>:8000
 """
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -21,26 +22,43 @@ QR_PATH = os.path.join(BASE, "demo_qr.png")
 PORT = 8000
 
 
-def get_lan_ip():
-    """获取本机在局域网中的 IP（手机热点分配的地址）"""
-    ips = []
+def get_all_ips():
+    """获取本机所有 IPv4 地址（优先 ipconfig，避开 VPN/虚拟网卡）"""
+    ips = set()
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))  # UDP 连接不真正发包，仅确定路由网卡
-        ip = s.getsockname()[0]
-        s.close()
-        if ip and not ip.startswith("127."):
-            ips.append(ip)
+        out = subprocess.check_output("ipconfig", shell=True).decode("gbk", errors="ignore")
+        for m in re.findall(r"IPv4[^\d]*(\d+\.\d+\.\d+\.\d+)", out):
+            if not m.startswith("127."):
+                ips.add(m)
     except Exception:
         pass
     try:
         hostname = socket.gethostname()
         for ip in socket.gethostbyname_ex(hostname)[2]:
-            if not ip.startswith("127.") and ip not in ips:
-                ips.append(ip)
+            if not ip.startswith("127."):
+                ips.add(ip)
     except Exception:
         pass
-    return ips[0] if ips else "127.0.0.1"
+    return sorted(ips)
+
+
+def pick_best_ip(ips):
+    """挑选最可能是手机热点/局域网的真实 IP"""
+    if not ips:
+        return "127.0.0.1"
+    # Android 热点 / 家用路由器最常见 192.168.x.x
+    for ip in ips:
+        if ip.startswith("192.168."):
+            return ip
+    # iPhone 热点 172.20.10.x
+    for ip in ips:
+        if ip.startswith("172.20.10."):
+            return ip
+    # 其它 172.x / 10.x 局域网段
+    for ip in ips:
+        if ip.startswith("10.") or ip.startswith("172."):
+            return ip
+    return ips[0]
 
 
 def generate_qr(url):
@@ -51,14 +69,18 @@ def generate_qr(url):
 
 
 def main():
-    ip = get_lan_ip()
+    ips = get_all_ips()
+    ip = pick_best_ip(ips)
     url = f"http://{ip}:{PORT}"
     qr = generate_qr(url)
 
-    print("=" * 50)
+    print("=" * 52)
     print("  CFA 合规自检助手 - 局域网演示模式")
-    print("=" * 50)
-    print(f"  本机 IP      : {ip}")
+    print("=" * 52)
+    print(f"  检测到的本机 IP 列表：")
+    for i in ips:
+        mark = "  ← 使用此地址" if i == ip else ""
+        print(f"    - {i}{mark}")
     print(f"  访问地址     : {url}")
     print(f"  二维码文件   : {qr}")
     print()
@@ -67,9 +89,10 @@ def main():
     print("  2. 评委手机连接同一热点")
     print("  3. 评委扫码，或直接访问上面的地址")
     print()
-    print("  ⚠ 首次启动若弹出 Windows 防火墙提示，请点「允许访问」")
+    print("  ⚠ 若自动选错地址，从上表手动挑 192.168.x 的地址")
+    print("  ⚠ 首次启动若弹 Windows 防火墙提示，请点「允许访问」")
     print("  ⚠ 按 Ctrl+C 停止服务")
-    print("=" * 50)
+    print("=" * 52)
 
     os.chdir(BACKEND)
     subprocess.run([
