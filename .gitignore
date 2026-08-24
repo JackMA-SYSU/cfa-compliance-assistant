@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 测试与缓存
+.pytest_cache/
+.cache/
+*.pyc
+
+# 向量库（Docker 构建时由 build_kb.py 重新生成）
+backend/chroma_db/
+
+# 中间产物（可由 PDF 重新生成）
+data/raw_pdf_text.txt
+
+# 环境与密钥
+.env
+.env.*
+
+# IDE / 系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

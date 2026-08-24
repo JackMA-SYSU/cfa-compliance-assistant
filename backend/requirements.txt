@@ -1,0 +1,10 @@
+fastapi==0.141.1
+uvicorn[standard]==0.48.0
+pydantic==2.12.4
+chromadb==1.5.9
+numpy==2.3.5
+scikit-learn==1.7.2
+joblib==1.5.2
+openai==2.44.0
+jieba==0.42.1
+httpx==0.28.1

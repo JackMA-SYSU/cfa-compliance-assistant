@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="description" content="CFA 道德合规 AI 自检助手 — 输入行为，自动识别准则、评估风险、生成披露清单" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="css/style.css" />
+  <title>CFA 合规自检助手</title>
+</head>
+<body>
+  <!-- 网络状态指示器 -->
+  <div id="netbar" class="netbar online"><span class="dot"></span><span id="nettext">在线</span></div>
+
+  <!-- ===== 视图 A：自查页 ===== -->
+  <main id="view-check" class="view active" role="tabpanel" aria-label="自查页">
+    <header class="topbar">
+      <div class="brand">CFA<span class="brand-accent">合规</span>自检助手</div>
+      <div class="brand-sub">AI 道德准则风险自检 · 中英对照</div>
+    </header>
+
+    <section class="input-card">
+      <label for="behavior" class="field-label">描述你的行为（自然语言）</label>
+      <div class="textarea-wrap">
+        <textarea id="behavior" rows="4" maxlength="4000"
+          placeholder="例如：客户邀请我去打高尔夫，还主动提出承担我出差的机票和酒店费用…"></textarea>
+        <button id="voice-btn" class="icon-btn" aria-label="语音输入" title="语音输入">🎤</button>
+      </div>
+
+      <div class="quick-tags" id="quick-tags" aria-label="快捷场景">
+        <button class="tag" data-text="客户送我高尔夫球票并承担差旅招待费用">收礼/招待</button>
+        <button class="tag" data-text="我想在业余时间接一份外部授课的兼职">兼职/副业</button>
+        <button class="tag" data-text="我打算离职创业并带走现有客户名单">离职/跳槽</button>
+        <button class="tag" data-text="我的个人账户提前于客户账户买入股票">个人交易</button>
+        <button class="tag" data-text="客户在公司薪酬之外额外付我一笔奖金">额外报酬</button>
+        <button class="tag" data-text="我在研报中夸大了某股票的评级和预测">研报/评级</button>
+        <button class="tag" data-text="我得知了公司未公开的并购内幕消息">内幕信息</button>
+        <button class="tag" data-text="我持有客户公司的股票并兼任其董事">利益冲突</button>
+      </div>
+
+      <button id="analyze-btn" class="primary-btn">开始合规自检</button>
+    </section>
+
+    <section id="result-area" class="result-area" aria-live="polite"></section>
+  </main>
+
+  <!-- ===== 视图 B：准则速查页 ===== -->
+  <main id="view-standards" class="view" role="tabpanel" aria-label="准则速查页">
+    <header class="topbar">
+      <div class="brand">准则速查</div>
+      <div class="brand-sub">Standard I–VII 中英对照</div>
+    </header>
+    <div class="search-box">
+      <input id="std-search" type="search" placeholder="搜索准则代码或关键词，如 IV(B) / 额外报酬" />
+    </div>
+    <div id="standards-list" class="standards-list"></div>
+  </main>
+
+  <!-- ===== 视图 C：历史记录页 ===== -->
+  <main id="view-history" class="view" role="tabpanel" aria-label="历史记录页">
+    <header class="topbar">
+      <div class="brand">历史记录</div>
+      <div class="brand-sub">本地保存的申报记录</div>
+    </header>
+    <div class="history-actions">
+      <button id="export-btn" class="secondary-btn">导出 PDF</button>
+      <button id="clear-history-btn" class="secondary-btn danger">清空</button>
+    </div>
+    <div id="history-list" class="history-list"></div>
+  </main>
+
+  <!-- 底部导航 -->
+  <nav class="tabbar" role="tablist" aria-label="主导航">
+    <button class="tab active" data-view="check" role="tab" aria-selected="true">🛡️ 自检</button>
+    <button class="tab" data-view="standards" role="tab" aria-selected="false">📖 准则</button>
+    <button class="tab" data-view="history" role="tab" aria-selected="false">🕘 记录</button>
+  </nav>
+
+  <script src="js/storage.js"></script>
+  <script src="js/offline.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

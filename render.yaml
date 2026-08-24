@@ -1,0 +1,17 @@
+# Render 后端部署配置
+services:
+  - type: web
+    name: cfa-compliance-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: deepseek-chat
+      - key: LLM_BASE_URL
+        value: https://api.deepseek.com
+      - key: CORS_ORIGINS
+        value: "*"

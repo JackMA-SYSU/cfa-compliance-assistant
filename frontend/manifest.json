@@ -1,0 +1,16 @@
+{
+  "name": "CFA 道德合规 AI 自检助手",
+  "short_name": "CFA合规自检",
+  "description": "输入行为描述，自动识别CFA道德准则、评估风险、生成披露清单",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1a1a2e",
+  "background_color": "#f8f9fa",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
