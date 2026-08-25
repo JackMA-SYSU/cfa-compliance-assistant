@@ -532,8 +532,50 @@
   }
 
   /* ---------- 合规自证 ---------- */
+  /* ---------- 手写签名板 ---------- */
+  let signatureData = null;
+
+  function setupSignaturePad() {
+    const canvas = document.getElementById('signature-pad');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    ctx.strokeStyle = '#111318';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (e.clientX - rect.left) * (canvas.width / rect.width),
+        y: (e.clientY - rect.top) * (canvas.height / rect.height),
+      };
+    }
+    function start(e) { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); }
+    function move(e) { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }
+    function end() { if (!drawing) return; drawing = false; signatureData = canvas.toDataURL('image/png'); }
+
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    canvas.addEventListener('mouseup', end);
+    canvas.addEventListener('mouseleave', end);
+    canvas.addEventListener('touchstart', (e) => start(e.touches[0]), { passive: false });
+    canvas.addEventListener('touchmove', (e) => move(e.touches[0]), { passive: false });
+    canvas.addEventListener('touchend', end);
+  }
+
+  function clearSignature() {
+    const canvas = document.getElementById('signature-pad');
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    signatureData = null;
+  }
+
+  document.getElementById('signature-clear').addEventListener('click', clearSignature);
+  setupSignaturePad();
+
   async function openProof(r) {
     document.getElementById('p-result').innerHTML = '';
+    clearSignature();
     // 填充关联申报编号下拉
     const decls = await Storage.getDeclarations();
     const sel = document.getElementById('p-ref');
@@ -566,8 +608,17 @@
       `声明时间：${time}`,
     ].join('\n');
 
+    const sigHtml = signatureData
+      ? `<img class="signature-img" src="${signatureData}" alt="签名" />`
+      : `<div class="signature-empty">（未签名）</div>`;
     document.getElementById('p-result').innerHTML = `
-      <div class="official-doc">${esc(doc)}</div>
+      <div class="official-doc">
+        <div class="doc-text">${esc(doc)}</div>
+        <div class="doc-footer">
+          <div class="doc-sign">${sigHtml}<div class="doc-sign-label">声明人签名</div></div>
+          <div class="seal"><span class="seal-inner">合规自证</span><span class="seal-id">${esc(id)}</span></div>
+        </div>
+      </div>
       <div class="declare-actions">
         <button class="secondary-btn" id="p-copy">复制声明内容</button>
         <button class="primary-btn" id="p-print">打印 / 导出 PDF</button>
@@ -577,7 +628,8 @@
     });
     document.getElementById('p-print').addEventListener('click', () => {
       const w = window.open('', '_blank');
-      w.document.write(`<html><head><meta charset="utf-8"><title>合规自证声明</title><style>body{font-family:sans-serif;max-width:620px;margin:40px auto;line-height:2;white-space:pre-wrap}</style></head><body>${esc(doc)}</body></html>`);
+      const sigPrint = signatureData ? `<img src="${signatureData}" style="height:60px;margin-top:12px" />` : '';
+      w.document.write(`<html><head><meta charset="utf-8"><title>合规自证声明</title><style>body{font-family:sans-serif;max-width:620px;margin:40px auto;line-height:2;white-space:pre-wrap}</style></head><body>${esc(doc)}${sigPrint}<div style="margin-top:16px;color:#d43a2a;font-weight:bold;border:2px solid #d43a2a;display:inline-block;padding:4px 12px;border-radius:6px;transform:rotate(-8deg)">合规自证</div></body></html>`);
       w.document.close();
       w.print();
     });

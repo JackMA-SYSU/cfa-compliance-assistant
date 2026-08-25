@@ -146,6 +146,11 @@
         <select id="p-ref" class="form-input">
           <option value="">无（不关联）</option>
         </select>
+        <label class="field-label" for="signature-pad">手写签名（可选）</label>
+        <div class="signature-box">
+          <canvas id="signature-pad" width="420" height="150"></canvas>
+          <button type="button" id="signature-clear" class="signature-clear">清除签名</button>
+        </div>
         <button id="p-generate" class="primary-btn">生成正式声明</button>
         <div id="p-result" class="declare-result"></div>
       </div>
