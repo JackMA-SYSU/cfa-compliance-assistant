@@ -640,15 +640,23 @@
   }
 
   document.getElementById('a-confirm').addEventListener('click', async () => {
+    const btn = document.getElementById('a-confirm');
+    if (btn.dataset.done === '1') {
+      closeModal('approval-modal');
+      renderCompliance();
+      btn.dataset.done = '';
+      btn.textContent = '确认并发送审批邮件';
+      return;
+    }
     const signature = document.getElementById('a-signature').value.trim();
     const opinion = document.getElementById('a-opinion').value.trim();
     if (!signature) { alert('请填写审批人签名'); return; }
     if (!currentApproval) return;
-    const btn = document.getElementById('a-confirm');
     btn.disabled = true;
     btn.textContent = '处理中...';
     const { decl, result } = currentApproval;
     try {
+      let sendOk = false;
       try {
         await API.sendApproval({
           declaration_id: decl.declaration_id,
@@ -658,19 +666,21 @@
           signature: signature,
           opinion: opinion,
         });
-        document.getElementById('a-status').innerHTML = '<div class="declare-box" style="background:#f0fdf9;border-color:var(--teal)"><span class="declare-id">✅ 审批邮件已发送至员工</span></div>';
+        sendOk = true;
+        document.getElementById('a-status').innerHTML = '<div class="declare-box" style="background:#f0fdf9;border-color:var(--teal)"><span class="declare-id">✅ 审批邮件已发送至员工邮箱</span></div>';
       } catch (e) {
-        document.getElementById('a-status').innerHTML = `<div class="declare-box" style="background:#fef2f2;border-color:var(--danger)">⚠️ 审批邮件发送失败（${esc(e.message)}），状态已本地更新</div>`;
+        console.error('审批邮件发送失败:', e);
+        document.getElementById('a-status').innerHTML = `<div class="declare-box" style="background:#fef2f2;border-color:var(--danger)">⚠️ 审批邮件发送失败（${esc(e.message)}），状态已本地更新，可点「完成」关闭</div>`;
       }
       decl.status = result;
       decl.signature = signature;
       decl.opinion = opinion;
       decl.reviewed_at = nowText();
       await Storage.updateDeclaration(decl);
-      setTimeout(() => { closeModal('approval-modal'); renderCompliance(); }, 800);
+      btn.textContent = '完成（关闭）';
+      btn.dataset.done = '1';
     } finally {
       btn.disabled = false;
-      btn.textContent = '确认并发送审批邮件';
     }
   });
 
