@@ -18,6 +18,7 @@
     clearBtn: document.getElementById('clear-history-btn'),
     complianceList: document.getElementById('compliance-list'),
     complianceStats: document.getElementById('compliance-stats'),
+    clearDeclarationsBtn: document.getElementById('clear-declarations-btn'),
     tabs: document.querySelectorAll('.tab'),
     views: document.querySelectorAll('.view'),
   };
@@ -338,6 +339,13 @@
     if (confirm('清空全部历史记录？')) {
       await Storage.clearSubmissions();
       renderHistory();
+    }
+  });
+
+  els.clearDeclarationsBtn.addEventListener('click', async () => {
+    if (confirm('清空所有申报记录？此操作不可恢复。')) {
+      await Storage.clearDeclarations();
+      renderCompliance();
     }
   });
 

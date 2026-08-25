@@ -77,4 +77,5 @@ const Storage = {
   saveDeclaration: (d) => dbPut('declarations', d),
   getDeclarations: () => dbGetAll('declarations'),
   updateDeclaration: (d) => dbPut('declarations', d),
+  clearDeclarations: () => dbClear('declarations'),
 };
