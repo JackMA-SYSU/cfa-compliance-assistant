@@ -215,8 +215,8 @@ for ax in [Inches(3.25), Inches(9.3)]:
     ar.fill.solid(); ar.fill.fore_color.rgb = GOLD; ar.line.fill.background(); ar.shadow.inherit = False
 text(s, Inches(0.6), Inches(4.5), Inches(12.1), Inches(0.5), "产品形态", 16, GOLD, bold=True)
 c = card(s, Inches(0.6), Inches(5.05), Inches(12.1), Inches(1.7), CARD, NAVY_MID, [
-    ("PWA 三视图（自检 / 准则速查 / 历史）+ 申报与自证弹窗", 14, TEXT, False),
-    ("支持语音输入 · 离线可用 · 手机/电脑多端适配", 14, TEXT, False),
+    ("PWA 四视图（自检 / 准则速查 / 历史 / 合规部）+ 申报·自证·审批弹窗", 14, TEXT, False),
+    ("支持语音输入 · 口语转正式 · 离线可用 · 手机/电脑多端适配", 14, TEXT, False),
 ])
 notes(s, "【45 秒】介绍产品形态，点到为止，细节留给演示页。'它长这样——一个随开随用的网页应用，手机电脑都能用，断网也能用。'")
 
@@ -224,10 +224,10 @@ notes(s, "【45 秒】介绍产品形态，点到为止，细节留给演示页�
 s = prs.slides.add_slide(BLANK)
 header(s, "06", "Agent 四大核心能力 · 逐一落地")
 caps = [
-    ("🔍 自主感知", "意图识别\n关键词+正则+语义三级", CARD, NAVY_MID),
-    ("🧠 分析决策", "风险评级 + 22子条款\n+ RAG 案例检索", CARD_TEAL, TEAL),
-    ("⚡ 任务执行", "生成申报单 + 发邮件\n+ 自证声明", CARD_GOLD, AMBER),
-    ("🔄 持续优化", "增量知识库 + 缓存\n+ 行为留痕", CARD_CORAL, CORAL),
+    ("🔍 自主感知", "口语转正式 + 9类意图识别\n关键词+正则+语义三级", CARD, NAVY_MID),
+    ("🧠 分析决策", "风险评级 + 22子条款\n+ RAG案例 + 行动强度分级", CARD_TEAL, TEAL),
+    ("⚡ 任务执行", "申报+发邮件+审批\n+回执+自证声明", CARD_GOLD, AMBER),
+    ("🔄 持续优化", "增量知识库 + 缓存\n+ 留痕 + 合规小贴士", CARD_CORAL, CORAL),
 ]
 for i, (t, d, fill, acc) in enumerate(caps):
     col = i % 2
@@ -244,8 +244,8 @@ notes(s, "【60 秒】★核心页。'赛道要求 Agent 四大能力，我们�
 s = prs.slides.add_slide(BLANK)
 header(s, "07", "Agent 起到了什么作用")
 roles = [
-    ("👤 对员工", "从「凭感觉」到「有依据」\n一句话换判断+清单+申报单", CARD, NAVY_MID),
-    ("🏛 对合规部门", "从「被动审查」到\n「主动申报+留痕可查」", CARD_TEAL, TEAL),
+    ("👤 对员工", "从「凭感觉」到「有依据」\n口语转正式+申报+自证", CARD, NAVY_MID),
+    ("🏛 对合规部门", "从「被动审查」到「签名审批」\n独立审查视角+回执留痕", CARD_TEAL, TEAL),
     ("🏢 对机构", "合规知识沉淀统一底座\n降本增效", CARD_GOLD, AMBER),
     ("🌐 对行业", "证明「规则驱动+案例约束\n+任务执行」范式可行", CARD_CORAL, CORAL),
 ]
@@ -258,7 +258,7 @@ for i, (t, d, fill, acc) in enumerate(roles):
         (t, 16, NAVY, True),
         (d, 13, TEXT, False),
     ])
-notes(s, "【45 秒】讲价值升维。'关键在任务执行——一般的 AI 只给建议，我们的 Agent 替你把申报发出去、把留痕存下来。这一步，就是从工具到 Agent 的本质。'")
+notes(s, "【45 秒】讲价值升维。'关键在任务执行——一般的 AI 只给建议，我们的 Agent 替你把申报发出去、把审批做完、把留痕存下来。员工和合规部是两套独立视角，这就是多智能体协同。'")
 
 # ============ 9 技术架构 ============
 s = prs.slides.add_slide(BLANK)
@@ -335,7 +335,7 @@ challenges = [
     ("模型幻觉", "RAG 约束 + 温度 0.3 + 规则引擎兜底"),
     ("数据安全", "离线优先，数据不出本机 + 私有化部署"),
     ("可解释性", "每个结论附带准则条款与题库案例"),
-    ("权限管理", "申报留痕、编号可追溯、审批流可扩展"),
+    ("权限管理", "员工提交→合规签名审批→回执留痕，二次确认"),
     ("责任边界", "辅助决策定位，高风险强制人工确认"),
 ]
 y = Inches(1.4)
@@ -352,11 +352,11 @@ s = prs.slides.add_slide(BLANK)
 header(s, "12", "改进过程：从工具到 Agent 的六次迭代")
 steps = [
     ("① 数据筑基", "230 题结构化"),
-    ("② 感知决策", "意图分类+评级"),
+    ("② 感知决策", "9类分类+评级"),
     ("③ 可解释", "RAG 案例检索"),
     ("④ 关键跃迁", "任务执行→Agent"),
-    ("⑤ 完善闭环", "拦截+自证"),
-    ("⑥ 落地优化", "国内SMTP+演示"),
+    ("⑤ 完善闭环", "拦截+自证+转写"),
+    ("⑥ 多智能体", "合规审批+回执"),
 ]
 for i, (t, d) in enumerate(steps):
     col = i % 3
@@ -368,8 +368,8 @@ for i, (t, d) in enumerate(steps):
         (d, 13, MUTED, False),
     ])
     badge(s, x + Inches(0.12), y + Inches(0.12), Inches(0.5), str(i + 1), NAVY_MID if i != 3 else AMBER, size=14)
-text(s, Inches(0.6), Inches(6.3), Inches(12.1), Inches(0.6), "第 ④ 步是质变：加上「任务执行」，它才从工具真正变成 Agent", 15, NAVY, bold=True)
-notes(s, "【50 秒】呼应'持续优化'。'我们没有一步到位，而是六次迭代，第四步是质变——加上任务执行，它才真正从工具变成 Agent。持续优化不是口号，是我们实际走过的路。'")
+text(s, Inches(0.6), Inches(6.3), Inches(12.1), Inches(0.6), "第 ④ 步是质变（工具→Agent），第 ⑥ 步落地多智能体协同（审查 Agent）", 15, NAVY, bold=True)
+notes(s, "【50 秒】呼应'持续优化'。'我们经历了六次迭代：第四步加上任务执行，从工具变成 Agent；第六步上线合规审批，落地了多智能体协同。持续优化不是口号，是我们实际走过的路。'")
 
 # ============ 14 使用价值与可推广 ============
 s = prs.slides.add_slide(BLANK)
