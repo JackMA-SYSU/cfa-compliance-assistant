@@ -78,4 +78,11 @@ const Storage = {
   getDeclarations: () => dbGetAll('declarations'),
   updateDeclaration: (d) => dbPut('declarations', d),
   clearDeclarations: () => dbClear('declarations'),
+  clearAll: async () => {
+    await Promise.all([
+      dbClear('submissions'),
+      dbClear('declarations'),
+      dbClear('pending_queue'),
+    ]);
+  },
 };

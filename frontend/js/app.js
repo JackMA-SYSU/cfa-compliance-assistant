@@ -343,9 +343,10 @@
   });
 
   els.clearDeclarationsBtn.addEventListener('click', async () => {
-    if (confirm('清空所有申报记录？此操作不可恢复。')) {
-      await Storage.clearDeclarations();
+    if (confirm('一键重置演示数据？将清空所有申报记录和历史记录，此操作不可恢复。')) {
+      await Storage.clearAll();
       renderCompliance();
+      renderHistory();
     }
   });
 
