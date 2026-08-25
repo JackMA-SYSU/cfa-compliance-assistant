@@ -210,6 +210,14 @@ textarea:focus { border-color: var(--navy-700); box-shadow: 0 0 0 3px rgba(31, 5
 .case-id { font-weight: 700; color: var(--navy-700); }
 .case-meta { color: var(--muted); font-size: 12px; }
 .case-summary { color: var(--muted); margin-top: 4px; font-size: 12px; line-height: 1.6; }
+.cases-collapse { margin-top: 2px; }
+.cases-toggle {
+  background: none; border: none; cursor: pointer; width: 100%;
+  text-align: left; font-family: var(--font); padding: 0;
+}
+.cases-toggle:hover .cases-arrow { color: var(--navy-700); }
+.cases-arrow { color: var(--muted); font-size: 13px; transition: color .15s; }
+.cases-body { margin-top: 4px; }
 
 /* 速查页 */
 .search-box { margin-bottom: 14px; }

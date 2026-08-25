@@ -230,7 +230,11 @@
       <ul class="checklist">${checklistHtml || '<div class="empty">无需特别动作</div>'}</ul>
       ${r.action_advice ? `<div class="section-title">操作建议</div><div class="advice">${esc(r.action_advice)}</div>` : ''}
       ${r.disclosure_draft ? `<div class="section-title">披露草稿</div><div class="disclosure">${esc(r.disclosure_draft)}<br><button class="copy-btn">复制披露草稿</button></div>` : ''}
-      ${casesHtml ? `<div class="section-title">类似题库案例</div>${casesHtml}` : ''}
+      ${casesHtml ? `
+        <div class="cases-collapse">
+          <button class="section-title cases-toggle" aria-expanded="false">类似题库案例（${(r.referenced_cases || []).length} 条）<span class="cases-arrow">▸</span></button>
+          <div class="cases-body" hidden>${casesHtml}</div>
+        </div>` : ''}
       ${actionIntensity ? `<div class="section-title">合规行动要求</div><div class="advice intensity ${risk}">${actionIntensity}</div>` : ''}
       ${tip ? `<div class="section-title">合规小贴士</div><div class="advice tip">💡 ${esc(tip)}</div>` : ''}
       <div class="section-title">合规行动</div>
@@ -247,6 +251,17 @@
     const copyBtn = els.resultArea.querySelector('.copy-btn');
     if (copyBtn) copyBtn.addEventListener('click', () => {
       navigator.clipboard.writeText(r.disclosure_draft).then(() => copyBtn.textContent = '已复制 ✓');
+    });
+
+    // 类似题库案例折叠
+    const casesToggle = els.resultArea.querySelector('.cases-toggle');
+    if (casesToggle) casesToggle.addEventListener('click', () => {
+      const body = els.resultArea.querySelector('.cases-body');
+      const arrow = els.resultArea.querySelector('.cases-arrow');
+      const collapsed = body.hidden;
+      body.hidden = !collapsed;
+      arrow.textContent = collapsed ? '▾' : '▸';
+      casesToggle.setAttribute('aria-expanded', String(collapsed));
     });
 
     // 申报 / 自证 按钮
