@@ -1,5 +1,5 @@
 /* Service Worker：网络优先（确保更新即时生效）+ 离线缓存回退 */
-const CACHE_NAME = 'cfa-compliance-v3';
+const CACHE_NAME = 'cfa-compliance-v7';
 const STATIC_ASSETS = [
   './',
   './index.html',

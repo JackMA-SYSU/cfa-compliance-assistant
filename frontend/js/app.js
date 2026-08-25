@@ -112,7 +112,7 @@
     const text = els.behavior.value.trim();
     if (!text) { els.behavior.focus(); return; }
     els.polishBtn.disabled = true;
-    els.polishBtn.textContent = '⏳';
+    els.polishBtn.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" stroke-dasharray="42" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg>';
     try {
       if (selectedEngine === 'local') {
         els.behavior.value = localPolish(text);
@@ -126,7 +126,7 @@
       }
     } finally {
       els.polishBtn.disabled = false;
-      els.polishBtn.textContent = '✍️';
+      els.polishBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5L17 3z"/><path d="M14 6l4 4"/></svg>';
     }
   });
 

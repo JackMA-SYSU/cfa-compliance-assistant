@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0e1a33" />
+  <meta name="theme-color" content="#16181d" />
   <meta name="description" content="合规自检助手 — 输入行为，自动识别准则、评估风险、执行申报" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="css/style.css?v=7" />
   <title>合规自检助手</title>
 </head>
 <body>
@@ -17,7 +20,7 @@
   <!-- ===== 视图 A：自查页 ===== -->
   <main id="view-check" class="view active" role="tabpanel" aria-label="自查页">
     <header class="topbar">
-      <div class="brand"><span class="brand-logo">🛡️</span>合规<span class="brand-accent">自检</span>助手</div>
+      <div class="brand"><span class="brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3.5v5.2c0 5-3.4 9.4-8 11.3-4.6-1.9-8-6.3-8-11.3V5.5L12 2z"/><path d="M8.5 12l2.4 2.4 4.6-4.8"/></svg></span>合规<span class="brand-accent">自检</span>助手</div>
       <div class="brand-sub">AI 道德准则风险自检与申报系统</div>
     </header>
 
@@ -26,23 +29,23 @@
       <div class="textarea-wrap">
         <textarea id="behavior" rows="4" maxlength="4000"
           placeholder="例如：客户邀请我去打高尔夫，还主动提出承担我出差的机票和酒店费用…"></textarea>
-        <button id="polish-btn" class="icon-btn polish-btn" aria-label="转化为正式申报语言" title="转化为正式申报语言">✍️</button>
-        <button id="voice-btn" class="icon-btn" aria-label="语音输入" title="语音输入">🎤</button>
+        <button id="polish-btn" class="icon-btn polish-btn" aria-label="转化为正式申报语言" title="转化为正式申报语言"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5L17 3z"/><path d="M14 6l4 4"/></svg></button>
+        <button id="voice-btn" class="icon-btn" aria-label="语音输入" title="语音输入"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 19v3"/></svg></button>
       </div>
 
       <div class="quick-tags" id="quick-tags" aria-label="快捷场景">
-        <button class="tag" data-text="客户送我高尔夫球票并承担差旅招待费用">🎁 收礼/招待</button>
-        <button class="tag" data-text="我想在业余时间接一份外部授课的兼职">💼 兼职/副业</button>
-        <button class="tag" data-text="我打算离职创业并带走现有客户名单">🚪 离职/跳槽</button>
-        <button class="tag" data-text="我的个人账户提前于客户账户买入股票">📈 个人交易</button>
-        <button class="tag" data-text="客户在公司薪酬之外额外付我一笔奖金">💰 额外报酬</button>
-        <button class="tag" data-text="我在研报中夸大了某股票的评级和预测">📝 研报/评级</button>
-        <button class="tag" data-text="我得知了公司未公开的并购内幕消息">🔒 内幕信息</button>
-        <button class="tag" data-text="我持有客户公司的股票并兼任其董事">⚖️ 利益冲突</button>
-        <button class="tag" data-text="我把客户信息泄露给了外部人员">🔓 泄露信息</button>
-        <button class="tag" data-text="我用亲属账户代客户交易">👥 亲属交易</button>
-        <button class="tag" data-text="我收受了客户安排的软美元好处">💳 软美元</button>
-        <button class="tag" data-text="我没有保存投资决策的研报记录">🗂 记录缺失</button>
+        <button class="tag" data-text="客户送我高尔夫球票并承担差旅招待费用">收礼/招待</button>
+        <button class="tag" data-text="我想在业余时间接一份外部授课的兼职">兼职/副业</button>
+        <button class="tag" data-text="我打算离职创业并带走现有客户名单">离职/跳槽</button>
+        <button class="tag" data-text="我的个人账户提前于客户账户买入股票">个人交易</button>
+        <button class="tag" data-text="客户在公司薪酬之外额外付我一笔奖金">额外报酬</button>
+        <button class="tag" data-text="我在研报中夸大了某股票的评级和预测">研报/评级</button>
+        <button class="tag" data-text="我得知了公司未公开的并购内幕消息">内幕信息</button>
+        <button class="tag" data-text="我持有客户公司的股票并兼任其董事">利益冲突</button>
+        <button class="tag" data-text="我把客户信息泄露给了外部人员">泄露信息</button>
+        <button class="tag" data-text="我用亲属账户代客户交易">亲属交易</button>
+        <button class="tag" data-text="我收受了客户安排的软美元好处">软美元</button>
+        <button class="tag" data-text="我没有保存投资决策的研报记录">记录缺失</button>
       </div>
 
       <div class="engine-select">
@@ -98,10 +101,10 @@
 
   <!-- 底部导航 -->
   <nav class="tabbar" role="tablist" aria-label="主导航">
-    <button class="tab active" data-view="check" role="tab" aria-selected="true">🛡️ 自检</button>
-    <button class="tab" data-view="standards" role="tab" aria-selected="false">📖 准则</button>
-    <button class="tab" data-view="history" role="tab" aria-selected="false">🕘 记录</button>
-    <button class="tab" data-view="compliance" role="tab" aria-selected="false">🏛 合规部</button>
+    <button class="tab active" data-view="check" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3.5v5.2c0 5-3.4 9.4-8 11.3-4.6-1.9-8-6.3-8-11.3V5.5L12 2z"/><path d="M8.5 12l2.4 2.4 4.6-4.8"/></svg><span>自检</span></button>
+    <button class="tab" data-view="standards" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5.5C4 4 7 3.6 12 5.2c5-1.6 8-1.2 10 .3v13.7c-2-1.5-5-1.9-10-.3-5-1.6-8-1.2-10 .3V5.5z"/><path d="M12 5.2v13.7"/></svg><span>准则</span></button>
+    <button class="tab" data-view="history" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>记录</span></button>
+    <button class="tab" data-view="compliance" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9.5L12 4l7 5.5V21"/><path d="M9 21v-6h6v6"/></svg><span>合规部</span></button>
   </nav>
 
   <!-- ===== 合规申报弹窗 ===== -->
@@ -171,10 +174,10 @@
     </div>
   </div>
 
-  <script src="js/storage.js?v=3"></script>
-  <script src="js/cases.js?v=3"></script>
-  <script src="js/offline.js?v=3"></script>
-  <script src="js/api.js?v=3"></script>
-  <script src="js/app.js?v=3"></script>
+  <script src="js/storage.js?v=6"></script>
+  <script src="js/cases.js?v=6"></script>
+  <script src="js/offline.js?v=6"></script>
+  <script src="js/api.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
 </body>
 </html>
