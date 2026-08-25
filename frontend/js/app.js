@@ -589,7 +589,7 @@
       const [stText, stClass] = statusMap[d.status] || statusMap.pending;
       const actions = d.status === 'pending'
         ? `<button class="c-approve" data-id="${d.id}">✓ 通过</button><button class="c-reject" data-id="${d.id}">✗ 驳回</button>`
-        : `<div class="case-meta">审批时间：${esc(d.reviewed_at || '—')}</div>`;
+        : `<div class="case-meta">审批时间：${esc(d.reviewed_at || '—')}${d.signature ? ' · 审批人：' + esc(d.signature) : ''}${d.opinion ? ' · 意见：' + esc(d.opinion) : ''}</div>`;
       return `<div class="compliance-item">
         <div class="compliance-head">
           <span class="compliance-id">${esc(d.declaration_id)}</span>
@@ -601,20 +601,63 @@
       </div>`;
     }).join('');
     els.complianceList.querySelectorAll('.c-approve').forEach(b =>
-      b.addEventListener('click', () => setDeclStatus(parseInt(b.dataset.id, 10), 'approved')));
+      b.addEventListener('click', () => openApproval(parseInt(b.dataset.id, 10), 'approved')));
     els.complianceList.querySelectorAll('.c-reject').forEach(b =>
-      b.addEventListener('click', () => setDeclStatus(parseInt(b.dataset.id, 10), 'rejected')));
+      b.addEventListener('click', () => openApproval(parseInt(b.dataset.id, 10), 'rejected')));
   }
 
-  async function setDeclStatus(id, status) {
+  let currentApproval = null;
+
+  async function openApproval(id, result) {
     const decls = await Storage.getDeclarations();
     const d = decls.find(x => x.id === id);
     if (!d) return;
-    d.status = status;
-    d.reviewed_at = nowText();
-    await Storage.updateDeclaration(d);
-    renderCompliance();
+    currentApproval = { id: id, result: result, decl: d };
+    document.getElementById('approval-title').textContent = result === 'approved' ? '审批通过确认' : '审批驳回确认';
+    document.getElementById('approval-info').innerHTML = `
+      <strong>${esc(d.declaration_id)}</strong> · 申报人：${esc(d.name)}<br>
+      ${esc(d.behavior)}<br>
+      审批结果：<strong>${result === 'approved' ? '通过 ✓' : '驳回 ✗'}</strong>`;
+    document.getElementById('a-opinion').value = '';
+    document.getElementById('a-signature').value = '';
+    document.getElementById('a-status').innerHTML = '';
+    openModal('approval-modal');
   }
+
+  document.getElementById('a-confirm').addEventListener('click', async () => {
+    const signature = document.getElementById('a-signature').value.trim();
+    const opinion = document.getElementById('a-opinion').value.trim();
+    if (!signature) { alert('请填写审批人签名'); return; }
+    if (!currentApproval) return;
+    const btn = document.getElementById('a-confirm');
+    btn.disabled = true;
+    btn.textContent = '处理中...';
+    const { decl, result } = currentApproval;
+    try {
+      try {
+        await API.sendApproval({
+          declaration_id: decl.declaration_id,
+          name: decl.name,
+          behavior: decl.behavior,
+          result: result,
+          signature: signature,
+          opinion: opinion,
+        });
+        document.getElementById('a-status').innerHTML = '<div class="declare-box" style="background:#f0fdf9;border-color:var(--teal)"><span class="declare-id">✅ 审批邮件已发送至员工</span></div>';
+      } catch (e) {
+        document.getElementById('a-status').innerHTML = `<div class="declare-box" style="background:#fef2f2;border-color:var(--danger)">⚠️ 审批邮件发送失败（${esc(e.message)}），状态已本地更新</div>`;
+      }
+      decl.status = result;
+      decl.signature = signature;
+      decl.opinion = opinion;
+      decl.reviewed_at = nowText();
+      await Storage.updateDeclaration(decl);
+      setTimeout(() => { closeModal('approval-modal'); renderCompliance(); }, 800);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '确认并发送审批邮件';
+    }
+  });
 
   /* ---------- 初始化 ---------- */
   updateNetState();

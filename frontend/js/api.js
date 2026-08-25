@@ -45,5 +45,16 @@ const API = (() => {
     return res.json();
   }
 
-  return { analyze, health, sendDeclaration, polish, setBaseUrl, getBaseUrl };
+  async function sendApproval(payload) {
+    const url = baseUrl ? `${baseUrl}/api/send-approval` : '/api/send-approval';
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`审批邮件发送失败 (${res.status})`);
+    return res.json();
+  }
+
+  return { analyze, health, sendDeclaration, polish, sendApproval, setBaseUrl, getBaseUrl };
 })();

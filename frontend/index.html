@@ -152,6 +152,25 @@
     </div>
   </div>
 
+  <!-- ===== 审批确认弹窗 ===== -->
+  <div id="approval-modal" class="modal-overlay" hidden role="dialog" aria-label="审批确认">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="approval-title">审批确认</h2>
+        <button class="modal-close" data-close="approval-modal" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="approval-info" class="declare-box"></div>
+        <label class="field-label" for="a-opinion">审批意见（可选）</label>
+        <textarea id="a-opinion" class="form-input" rows="2" placeholder="填写审批意见"></textarea>
+        <label class="field-label" for="a-signature">审批人签名 <span style="color:var(--danger)">*</span></label>
+        <input id="a-signature" class="form-input" placeholder="请输入审批人签名（将显示在邮件中）" />
+        <button id="a-confirm" class="primary-btn">确认并发送审批邮件</button>
+        <div id="a-status"></div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/storage.js"></script>
   <script src="js/cases.js"></script>
   <script src="js/offline.js"></script>

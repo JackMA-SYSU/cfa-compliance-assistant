@@ -60,6 +60,7 @@ CORS_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "*").split(","
 
 # 邮件申报（SMTP 发送，默认 QQ 邮箱，国内无需翻墙）
 EMAIL_TO = os.environ.get("EMAIL_TO", "eric_han_music@petalmail.com")
+EMPLOYEE_EMAIL = os.environ.get("EMPLOYEE_EMAIL", "3517621936@qq.com")  # 员工（审批回执收件人）
 SMTP_HOST = os.environ.get("SMTP_HOST", "smtp.qq.com")
 SMTP_PORT = int(os.environ.get("SMTP_PORT", "465"))
 SMTP_USER = os.environ.get("SMTP_USER", "3517621936@qq.com")

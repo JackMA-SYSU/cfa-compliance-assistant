@@ -8,7 +8,7 @@ from fastapi import APIRouter, Request, HTTPException
 import config
 from models.schemas import (
     AnalyzeRequest, AnalyzeResponse, SendDeclarationRequest, SendDeclarationResponse,
-    PolishRequest, PolishResponse,
+    PolishRequest, PolishResponse, SendApprovalRequest, SendApprovalResponse,
 )
 
 logger = logging.getLogger("compliance")
@@ -26,6 +26,27 @@ def _rate_limited(ip: str, limit: int, window: int = 60) -> bool:
         return True
     _rate_bucket[ip].append(now)
     return False
+
+
+def _send_mail(subject: str, body: str, to: str):
+    """通过 SMTP 发送邮件（默认 QQ 邮箱）"""
+    import smtplib
+    from email.header import Header
+    from email.mime.text import MIMEText
+
+    msg = MIMEText(body, "plain", "utf-8")
+    msg["Subject"] = Header(subject, "utf-8")
+    msg["From"] = config.SMTP_FROM
+    msg["To"] = to
+
+    if config.SMTP_PORT == 465:
+        server = smtplib.SMTP_SSL(config.SMTP_HOST, config.SMTP_PORT, timeout=15)
+    else:
+        server = smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT, timeout=15)
+        server.starttls()
+    server.login(config.SMTP_USER, config.SMTP_PASSWORD)
+    server.sendmail(config.SMTP_FROM, [to], msg.as_string())
+    server.quit()
 
 
 @router.post("/analyze", response_model=AnalyzeResponse)
@@ -59,29 +80,45 @@ async def send_declaration(req: SendDeclarationRequest, request: Request):
     if not config.SMTP_PASSWORD:
         raise HTTPException(status_code=500, detail="邮件服务未配置（缺少 SMTP_PASSWORD 授权码）")
 
-    import smtplib
-    from email.header import Header
-    from email.mime.text import MIMEText
-
-    msg = MIMEText(req.message, "plain", "utf-8")
-    msg["Subject"] = Header(req.subject, "utf-8")
-    msg["From"] = config.SMTP_FROM
-    msg["To"] = config.EMAIL_TO
-
     try:
-        if config.SMTP_PORT == 465:
-            server = smtplib.SMTP_SSL(config.SMTP_HOST, config.SMTP_PORT, timeout=15)
-        else:
-            server = smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT, timeout=15)
-            server.starttls()
-        server.login(config.SMTP_USER, config.SMTP_PASSWORD)
-        server.sendmail(config.SMTP_FROM, [config.EMAIL_TO], msg.as_string())
-        server.quit()
+        _send_mail(req.subject, req.message, config.EMAIL_TO)
     except Exception as e:  # noqa: BLE001
         logger.exception("SMTP 发送异常")
         raise HTTPException(status_code=502, detail=f"邮件发送失败: {e}")
 
     return SendDeclarationResponse(sent=True, message=f"邮件已发送至 {config.EMAIL_TO}")
+
+
+@router.post("/send-approval", response_model=SendApprovalResponse)
+async def send_approval(req: SendApprovalRequest, request: Request):
+    """合规部审批后，向员工回发审批结果邮件（含签名）"""
+    ip = request.client.host if request.client else "unknown"
+    if _rate_limited(ip, 20):
+        raise HTTPException(status_code=429, detail="请求过于频繁，请稍后再试")
+
+    if not config.SMTP_PASSWORD:
+        raise HTTPException(status_code=500, detail="邮件服务未配置（缺少 SMTP_PASSWORD 授权码）")
+
+    result_text = "已通过" if req.result == "approved" else "已驳回"
+    now = time.strftime("%Y-%m-%d %H:%M:%S")
+    subject = f"【审批结果】申报 {req.declaration_id} {result_text}"
+    body = (
+        f"申报人 {req.name}：\n\n"
+        f"您提交的合规申报（编号 {req.declaration_id}）经合规部审批，结果为：{result_text}。\n\n"
+        f"【申报内容】\n{req.behavior}\n\n"
+        + (f"【审批意见】\n{req.opinion}\n\n" if req.opinion else "")
+        + f"审批人签名：{req.signature}\n"
+        f"审批时间：{now}\n\n"
+        f"此致\n合规部"
+    )
+
+    try:
+        _send_mail(subject, body, config.EMPLOYEE_EMAIL)
+    except Exception as e:  # noqa: BLE001
+        logger.exception("审批邮件发送异常")
+        raise HTTPException(status_code=502, detail=f"邮件发送失败: {e}")
+
+    return SendApprovalResponse(sent=True, message=f"审批邮件已发送至 {config.EMPLOYEE_EMAIL}")
 
 
 _POLISH_RULES = [

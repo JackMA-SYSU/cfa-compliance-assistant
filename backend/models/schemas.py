@@ -71,3 +71,17 @@ class PolishRequest(BaseModel):
 
 class PolishResponse(BaseModel):
     polished: str = Field(..., description="改写后的正式申报语言")
+
+
+class SendApprovalRequest(BaseModel):
+    declaration_id: str = Field(..., description="申报编号")
+    name: str = Field(..., description="申报人姓名")
+    behavior: str = Field(..., description="申报行为描述")
+    result: str = Field(..., description="approved / rejected")
+    signature: str = Field(..., description="审批人签名")
+    opinion: str = Field("", description="审批意见（可选）")
+
+
+class SendApprovalResponse(BaseModel):
+    sent: bool
+    message: str = ""
