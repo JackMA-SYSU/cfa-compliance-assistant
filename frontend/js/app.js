@@ -576,13 +576,16 @@
   async function openProof(r) {
     document.getElementById('p-result').innerHTML = '';
     clearSignature();
-    // 填充关联申报编号下拉
+    // 填充关联申报编号下拉（仅已审批通过的申报）
     const decls = await Storage.getDeclarations();
+    const approved = decls.filter(d => d.status === 'approved').reverse();
     const sel = document.getElementById('p-ref');
     sel.innerHTML = '<option value="">无（不关联）</option>' +
-      decls.slice().reverse().slice(0, 10).map(d =>
-        `<option value="${esc(d.declaration_id)}">${esc(d.declaration_id)} · ${esc(d.behavior.slice(0, 15))}</option>`
-      ).join('');
+      (approved.length
+        ? approved.slice(0, 10).map(d =>
+            `<option value="${esc(d.declaration_id)}">${esc(d.declaration_id)} · ${esc(d.behavior.slice(0, 15))}</option>`
+          ).join('')
+        : '<option value="" disabled>暂无已审批通过的申报</option>');
     openModal('proof-modal');
   }
 
