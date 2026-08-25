@@ -1,7 +1,7 @@
 /* IndexedDB 封装（离线优先存储） */
 const DB_NAME = 'cfa-compliance';
-const DB_VERSION = 1;
-const STORES = ['submissions', 'pending_queue', 'standards_cache'];
+const DB_VERSION = 2;
+const STORES = ['submissions', 'pending_queue', 'standards_cache', 'declarations'];
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -73,4 +73,8 @@ const Storage = {
     const all = await dbGetAll('standards_cache');
     return all.length ? all[0].data : null;
   },
+
+  saveDeclaration: (d) => dbPut('declarations', d),
+  getDeclarations: () => dbGetAll('declarations'),
+  updateDeclaration: (d) => dbPut('declarations', d),
 };

@@ -16,6 +16,8 @@
     historyList: document.getElementById('history-list'),
     exportBtn: document.getElementById('export-btn'),
     clearBtn: document.getElementById('clear-history-btn'),
+    complianceList: document.getElementById('compliance-list'),
+    complianceStats: document.getElementById('compliance-stats'),
     tabs: document.querySelectorAll('.tab'),
     views: document.querySelectorAll('.view'),
   };
@@ -60,6 +62,7 @@
     });
     if (name === 'standards') renderStandards(els.stdSearch.value);
     if (name === 'history') renderHistory();
+    if (name === 'compliance') renderCompliance();
   }
 
   /* ---------- 网络状态 ---------- */
@@ -202,6 +205,13 @@
         <div class="intercept-body">检测到该行为存在明显越界风险，请立即停止相关安排，并完成合规申报以留存记录。</div>
       </div>` : '';
 
+    const actionIntensity = {
+      high: '🔴 强制申报：必须完成申报并取得合规部审批',
+      mid: '🟡 建议申报：建议向合规部门申报留痕',
+      low: '🟢 仅需知晓：保持合规即可，无需特别申报',
+    }[risk] || '';
+    const tip = (window.COMPLIANCE_TIPS && window.COMPLIANCE_TIPS[r.category]) || '';
+
     els.resultArea.innerHTML = `
       ${interceptHtml}
       <div class="risk-card ${risk}">
@@ -221,6 +231,8 @@
       ${r.action_advice ? `<div class="section-title">操作建议</div><div class="advice">${esc(r.action_advice)}</div>` : ''}
       ${r.disclosure_draft ? `<div class="section-title">披露草稿</div><div class="disclosure">${esc(r.disclosure_draft)}<br><button class="copy-btn">复制披露草稿</button></div>` : ''}
       ${casesHtml ? `<div class="section-title">类似题库案例</div>${casesHtml}` : ''}
+      ${actionIntensity ? `<div class="section-title">合规行动要求</div><div class="advice intensity ${risk}">${actionIntensity}</div>` : ''}
+      ${tip ? `<div class="section-title">合规小贴士</div><div class="advice tip">💡 ${esc(tip)}</div>` : ''}
       <div class="section-title">合规行动</div>
       <div class="result-actions">
         <button class="primary-btn" id="declare-btn">📩 前往申报（提交申报单）</button>
@@ -456,11 +468,25 @@
     const subject = `【合规申报】${name} - ${id}`;
     const mailto = `mailto:${EMAIL_TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
+    // 保存申报记录（待审批状态）
+    Storage.saveDeclaration({
+      id: Date.now(),
+      declaration_id: id,
+      name: name,
+      dept: dept,
+      behavior: behavior,
+      standards: standards,
+      risk: risk,
+      status: 'pending',
+      created_at: time,
+    });
+
     document.getElementById('d-result').innerHTML = `
       <div class="declare-box">
         <span class="declare-id">✅ 申报单已生成</span><br>
         申报编号：<strong>${esc(id)}</strong><br>
         申报时间：${esc(time)}<br>
+        审批状态：<span class="c-status pending">待审批</span><br>
         发送至：${esc(EMAIL_TO)}
       </div>
       <div class="declare-actions">
@@ -491,8 +517,15 @@
   }
 
   /* ---------- 合规自证 ---------- */
-  function openProof(r) {
+  async function openProof(r) {
     document.getElementById('p-result').innerHTML = '';
+    // 填充关联申报编号下拉
+    const decls = await Storage.getDeclarations();
+    const sel = document.getElementById('p-ref');
+    sel.innerHTML = '<option value="">无（不关联）</option>' +
+      decls.slice().reverse().slice(0, 10).map(d =>
+        `<option value="${esc(d.declaration_id)}">${esc(d.declaration_id)} · ${esc(d.behavior.slice(0, 15))}</option>`
+      ).join('');
     openModal('proof-modal');
   }
 
@@ -501,6 +534,7 @@
   function generateProof() {
     const name = document.getElementById('p-name').value.trim();
     const matter = document.getElementById('p-matter').value.trim();
+    const ref = document.getElementById('p-ref').value.trim();
     if (!name) { alert('请填写声明人姓名'); return; }
     if (!matter) { alert('请填写声明事项'); return; }
 
@@ -508,7 +542,8 @@
     const time = nowText();
     const doc = [
       '合规自证声明', '',
-      `声明编号：${id}`, '',
+      `声明编号：${id}`,
+      (ref ? `关联申报编号：${ref}` : ''), '',
       `本人 ${name}，现就以下事项作出正式声明：`, '',
       '【声明事项】', matter, '',
       '本人郑重声明：在上述事项中，本人已尽到应有的合规义务，并已于相关行为发生前向有关方面完成了必要的披露与申报。如后续因该事项产生任何合规争议，本声明可作为本人诚信履责的书面凭证。', '',
@@ -531,6 +566,54 @@
       w.document.close();
       w.print();
     });
+  }
+
+  /* ---------- 合规部审批视角 ---------- */
+  async function renderCompliance() {
+    const decls = await Storage.getDeclarations();
+    decls.sort((a, b) => b.id - a.id);
+    const pending = decls.filter(d => d.status === 'pending').length;
+    const approved = decls.filter(d => d.status === 'approved').length;
+    const rejected = decls.filter(d => d.status === 'rejected').length;
+    els.complianceStats.innerHTML = `
+      <div class="cstat"><span class="cstat-num">${decls.length}</span><span>总申报</span></div>
+      <div class="cstat pending"><span class="cstat-num">${pending}</span><span>待审批</span></div>
+      <div class="cstat approved"><span class="cstat-num">${approved}</span><span>已通过</span></div>
+      <div class="cstat rejected"><span class="cstat-num">${rejected}</span><span>已驳回</span></div>`;
+    if (!decls.length) {
+      els.complianceList.innerHTML = '<div class="empty">暂无申报记录，先在「自检」页完成一次申报</div>';
+      return;
+    }
+    const statusMap = { pending: ['待审批', 'pending'], approved: ['已通过', 'approved'], rejected: ['已驳回', 'rejected'] };
+    els.complianceList.innerHTML = decls.map(d => {
+      const [stText, stClass] = statusMap[d.status] || statusMap.pending;
+      const actions = d.status === 'pending'
+        ? `<button class="c-approve" data-id="${d.id}">✓ 通过</button><button class="c-reject" data-id="${d.id}">✗ 驳回</button>`
+        : `<div class="case-meta">审批时间：${esc(d.reviewed_at || '—')}</div>`;
+      return `<div class="compliance-item">
+        <div class="compliance-head">
+          <span class="compliance-id">${esc(d.declaration_id)}</span>
+          <span class="c-status ${stClass}">${stText}</span>
+        </div>
+        <div class="compliance-body">${esc(d.name)}（${esc(d.dept || '未填部门')}）：${esc(d.behavior)}</div>
+        <div class="case-meta">风险：${esc(d.risk)} · 准则：${esc(d.standards)} · ${esc(d.created_at)}</div>
+        <div class="compliance-actions">${actions}</div>
+      </div>`;
+    }).join('');
+    els.complianceList.querySelectorAll('.c-approve').forEach(b =>
+      b.addEventListener('click', () => setDeclStatus(parseInt(b.dataset.id, 10), 'approved')));
+    els.complianceList.querySelectorAll('.c-reject').forEach(b =>
+      b.addEventListener('click', () => setDeclStatus(parseInt(b.dataset.id, 10), 'rejected')));
+  }
+
+  async function setDeclStatus(id, status) {
+    const decls = await Storage.getDeclarations();
+    const d = decls.find(x => x.id === id);
+    if (!d) return;
+    d.status = status;
+    d.reviewed_at = nowText();
+    await Storage.updateDeclaration(d);
+    renderCompliance();
   }
 
   /* ---------- 初始化 ---------- */

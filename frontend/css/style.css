@@ -355,3 +355,32 @@ textarea.form-input { min-height: 72px; resize: vertical; }
   .view { max-width: 640px; margin: 0 auto; }
   .modal-overlay { align-items: center; }
 }
+
+/* 风险行动强度 */
+.advice.intensity { font-weight: 600; }
+.advice.intensity.high { background: #fef2f2; border-left: 4px solid var(--coral); color: #b3371f; }
+.advice.intensity.mid { background: #fffbeb; border-left: 4px solid var(--amber); color: #a0750a; }
+.advice.intensity.low { background: #f0fdfa; border-left: 4px solid var(--teal); color: #1f7a6d; }
+.advice.tip { background: #fdfaf1; border-left: 4px solid var(--gold); }
+
+/* 合规部审批 */
+.compliance-stats { display: flex; gap: 10px; margin-bottom: 14px; }
+.cstat { flex: 1; background: var(--card); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); padding: 10px; text-align: center; border: 1px solid var(--border); }
+.cstat-num { display: block; font-size: 20px; font-weight: 800; color: var(--navy-800); }
+.cstat span:last-child { font-size: 12px; color: var(--muted); }
+.cstat.pending .cstat-num { color: var(--amber); }
+.cstat.approved .cstat-num { color: var(--teal); }
+.cstat.rejected .cstat-num { color: var(--coral); }
+.compliance-item { background: var(--card); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); padding: 13px; margin-bottom: 10px; border: 1px solid var(--border); }
+.compliance-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.compliance-id { font-weight: 700; color: var(--navy-700); }
+.compliance-body { font-size: 14px; }
+.c-status { font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 12px; }
+.c-status.pending { background: #fffbeb; color: var(--amber); }
+.c-status.approved { background: #e8f6f3; color: var(--teal); }
+.c-status.rejected { background: #fef2f2; color: var(--coral); }
+.compliance-actions { display: flex; gap: 8px; margin-top: 8px; }
+.c-approve, .c-reject { flex: 1; min-height: 36px; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 600; font-family: var(--font); }
+.c-approve { background: var(--teal); color: #fff; }
+.c-approve:hover { opacity: .88; }
+.c-reject { background: #fff; color: var(--coral); border: 1px solid var(--coral); }

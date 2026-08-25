@@ -63,6 +63,18 @@ window.STANDARD_INFO = {
   'VII(B)': ['CFA头衔引用', '按规范引用CFA会员资格与头衔', '头衔 引用 会员资格'],
 };
 
+window.COMPLIANCE_TIPS = {
+  gift_entertainment: '合规替代：礼品、招待可自费，或接受前向雇主书面披露并取得同意。',
+  side_job: '合规替代：兼职/授课前向雇主披露，取得书面同意，避免与本职工作冲突。',
+  leaving_job: '合规替代：离职前履行交接义务，不带走客户名单与保密资料。',
+  personal_trade: '合规替代：个人交易严格排在客户交易之后，并遵循公司交易审批流程。',
+  extra_compensation: '合规替代：接受额外报酬前，向雇主书面披露并取得所有相关方书面同意。',
+  research_integrity: '合规替代：研报基于充分研究与合理依据，区分事实与观点。',
+  mnpi: '合规替代：持有重大非公开信息时禁止交易，也不得促使他人据此交易。',
+  conflict_interest: '合规替代：充分披露利益冲突，必要时回避相关决策。',
+  misconduct: '合规替代：保持职业操守，任何情况下不得有欺诈、欺骗等不当行为。',
+};
+
 function offlineClassify(text) {
   let best = null, bestScore = 0, rules = [];
   for (const [cat, cfg] of Object.entries(CATEGORIES)) {

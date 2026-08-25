@@ -39,6 +39,10 @@
         <button class="tag" data-text="我在研报中夸大了某股票的评级和预测">📝 研报/评级</button>
         <button class="tag" data-text="我得知了公司未公开的并购内幕消息">🔒 内幕信息</button>
         <button class="tag" data-text="我持有客户公司的股票并兼任其董事">⚖️ 利益冲突</button>
+        <button class="tag" data-text="我把客户信息泄露给了外部人员">🔓 泄露信息</button>
+        <button class="tag" data-text="我用亲属账户代客户交易">👥 亲属交易</button>
+        <button class="tag" data-text="我收受了客户安排的软美元好处">💳 软美元</button>
+        <button class="tag" data-text="我没有保存投资决策的研报记录">🗂 记录缺失</button>
       </div>
 
       <div class="engine-select">
@@ -82,11 +86,22 @@
     <div id="history-list" class="history-list"></div>
   </main>
 
+  <!-- ===== 视图 D：合规部（审批视角） ===== -->
+  <main id="view-compliance" class="view" role="tabpanel" aria-label="合规部审批页">
+    <header class="topbar">
+      <div class="brand">合规部</div>
+      <div class="brand-sub">申报审批 · 多智能体协同（审查 Agent 视角）</div>
+    </header>
+    <div id="compliance-stats" class="compliance-stats"></div>
+    <div id="compliance-list" class="compliance-list"></div>
+  </main>
+
   <!-- 底部导航 -->
   <nav class="tabbar" role="tablist" aria-label="主导航">
     <button class="tab active" data-view="check" role="tab" aria-selected="true">🛡️ 自检</button>
     <button class="tab" data-view="standards" role="tab" aria-selected="false">📖 准则</button>
     <button class="tab" data-view="history" role="tab" aria-selected="false">🕘 记录</button>
+    <button class="tab" data-view="compliance" role="tab" aria-selected="false">🏛 合规部</button>
   </nav>
 
   <!-- ===== 合规申报弹窗 ===== -->
@@ -127,6 +142,10 @@
         <input id="p-name" class="form-input" placeholder="你的姓名" />
         <label class="field-label" for="p-matter">声明事项</label>
         <textarea id="p-matter" class="form-input" rows="4" placeholder="例如：本人已在相关事项发生前向合规部门完成披露，此事与本人无关"></textarea>
+        <label class="field-label" for="p-ref">关联申报编号（可选）</label>
+        <select id="p-ref" class="form-input">
+          <option value="">无（不关联）</option>
+        </select>
         <button id="p-generate" class="primary-btn">生成正式声明</button>
         <div id="p-result" class="declare-result"></div>
       </div>
