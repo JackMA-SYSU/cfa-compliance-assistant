@@ -283,7 +283,8 @@ for i, (t, d) in enumerate(decisions):
         (t, 15, NAVY, True),
         (d, 13, MUTED, False),
     ])
-text(s, Inches(0.6), Inches(5.9), Inches(12.1), Inches(0.7), "技术栈：FastAPI + ChromaDB + RAG + PWA + SMTP（QQ 邮箱）", 13, MUTED)
+text(s, Inches(0.6), Inches(5.9), Inches(12.1), Inches(0.7), "金融文本分析：TF-IDF 词向量 + Jieba 分词 + 关键词加权 + 否定词处理", 13, MUTED)
+text(s, Inches(0.6), Inches(6.35), Inches(12.1), Inches(0.6), "技术栈：FastAPI + ChromaDB + RAG + PWA + SMTP（QQ 邮箱）", 13, MUTED)
 notes(s, "【50 秒】不讲技术名词，讲'为什么这么选'。'我们不裸用大模型，而是用 RAG 让每个结论有案例兜底；再加规则引擎，没网也能跑。都是冲着安全、可解释、可落地去的。'")
 
 # ============ 10 现场演示 ============

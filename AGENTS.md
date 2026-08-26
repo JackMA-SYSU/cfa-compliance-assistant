@@ -35,6 +35,7 @@
 - 前端：HTML5 + Vanilla JS + 原生 CSS（PWA，无构建工具）
 - 后端：Python FastAPI + Pydantic v2
 - 检索：ChromaDB + 离线 TF-IDF/Jieba 嵌入（默认，无需联网；可选 sentence-transformers）
+- 文本分析：TF-IDF 词向量 + SVD 降维 + 关键词加权 + 否定词处理 + 字符 n-gram 相似度
 - 邮件：QQ 邮箱 SMTP（国内无需翻墙）
 - 数据：230 道 CFA 一级道德题库（中英对照）
 
