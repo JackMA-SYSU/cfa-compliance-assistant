@@ -75,17 +75,37 @@ window.COMPLIANCE_TIPS = {
   misconduct: '合规替代：保持职业操守，任何情况下不得有欺诈、欺骗等不当行为。',
 };
 
+const NEGATIONS = ['没有', '并未', '拒绝', '未', '不', '无'];
+
+// 关键词命中，并排除否定（如「我没有收礼」「我拒绝了客户的礼品」不判为收礼）
+function kwHit(text, kw) {
+  const idx = text.indexOf(kw);
+  if (idx === -1) return false;
+  const before = text.slice(Math.max(0, idx - 8), idx);
+  return !NEGATIONS.some(n => before.includes(n));
+}
+
+// 关键词权重：越长的词越具体、越有区分度，权重越高
+function kwWeight(kw) {
+  return kw.length >= 4 ? 3 : kw.length >= 3 ? 2 : 1;
+}
+
 function offlineClassify(text) {
   let best = null, bestScore = 0, rules = [];
   for (const [cat, cfg] of Object.entries(CATEGORIES)) {
     let score = 0, hits = [];
-    cfg.keywords.forEach(kw => { if (text.includes(kw)) { score++; hits.push(kw); } });
+    cfg.keywords.forEach(kw => {
+      if (kwHit(text, kw)) {
+        score += kwWeight(kw);
+        hits.push(kw);
+      }
+    });
     if (score > bestScore) { bestScore = score; best = cat; rules = hits; }
   }
   if (!best) return { category: 'uncertain', confidence: 0, matched_rules: [] };
   return {
     category: best,
-    confidence: Math.min(0.95, 0.55 + bestScore * 0.08),
+    confidence: Math.min(0.95, 0.5 + bestScore * 0.07),
     matched_rules: rules.slice(0, 6),
   };
 }
@@ -144,9 +164,28 @@ function localPolish(text) {
     ['送我去', '安排我前往'],
     ['承担', '由对方承担'],
   ];
-  for (const [from, to] of rules) t = t.split(from).join(to);
+  let matched = false;
+  for (const [from, to] of rules) {
+    if (t.includes(from)) { t = t.split(from).join(to); matched = true; }
+  }
   if (t.startsWith('本人')) return t + '，特此申报。';
-  return '本人' + t + '，特此申报。';
+  if (matched) return '本人' + t + '，特此申报。';
+  // 规则没匹配上，按行为类别套用正式模板
+  const cat = offlineClassify(t).category;
+  const tmpl = {
+    gift_entertainment: '本人拟接受相关方提供的礼品或招待，特此披露并申报。',
+    side_job: '本人拟在雇主之外从事兼职或授课活动，特此披露并申报。',
+    leaving_job: '本人拟办理离职相关事宜，特此披露并申报。',
+    personal_trade: '本人拟进行个人账户交易，特此披露并申报。',
+    extra_compensation: '本人拟接受第三方支付的额外报酬，特此披露并申报。',
+    research_integrity: '本人拟发布相关投资研究报告，特此披露并申报。',
+    mnpi: '本人拟就相关非公开信息事项进行申报，特此披露。',
+    conflict_interest: '本人存在潜在利益冲突，特此披露并申报。',
+    misconduct: '本人相关行为需向合规部门说明，特此申报。',
+  }[cat];
+  if (tmpl) return tmpl;
+  if (t.startsWith('我')) t = '本人' + t.slice(1);
+  return t + '，特此申报。';
 }
 
 function offlineAnalyze(text) {
