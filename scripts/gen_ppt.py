@@ -226,7 +226,7 @@ header(s, "06", "Agent 四大核心能力 · 逐一落地")
 caps = [
     ("🔍 自主感知", "口语转正式 + 9类意图识别\n关键词+正则+语义三级", CARD, NAVY_MID),
     ("🧠 分析决策", "风险评级 + 22子条款\n+ RAG案例 + 行动强度分级", CARD_TEAL, TEAL),
-    ("⚡ 任务执行", "申报+发邮件+审批\n+回执+自证声明", CARD_GOLD, AMBER),
+    ("⚡ 任务执行", "申报+发邮件+审批+回执\n+自证(手写签名+电子印章)", CARD_GOLD, AMBER),
     ("🔄 持续优化", "增量知识库 + 缓存\n+ 留痕 + 合规小贴士", CARD_CORAL, CORAL),
 ]
 for i, (t, d, fill, acc) in enumerate(caps):
