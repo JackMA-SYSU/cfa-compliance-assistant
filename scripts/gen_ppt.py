@@ -199,9 +199,40 @@ rect(s, Inches(0.6), Inches(4.4), Inches(12.1), Inches(1.6), CARD_NAVY, MSO_SHAP
 text(s, Inches(0.9), Inches(4.6), Inches(11.6), Inches(1.2), "数据佐证：230 题库中准则应用指南占 64.3%，错题集中在客户责任与雇主责任的案例辨析\n结论：员工不是不想合规，而是缺少可执行的决策工具", 15, TEXT, bold=False)
 notes(s, "【45 秒】讲具体，让评委有画面感。'员工不是不想合规，是面对抽象准则，不知道该不该、向谁、披露什么。' 点出：'所以我们要做的不仅是提示，更是帮他办成。'")
 
-# ============ 6 方案概述 ============
+# ============ 6 市场分析 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "05", "方案概述：一个能「执行」的合规 Agent")
+header(s, "05", "市场分析：金融道德风险高发，合规工具需求旺盛")
+market_stats = [
+    ("1.6万亿", "美元 / 年", "全球洗钱规模\n占全球GDP 2.7%"),
+    ("3,490起", "近5年累计", "FINRA 新增纪律处分\n(2021–2025)"),
+    ("4.4亿", "美元", "FINRA 罚款+追缴\n(2021–2025)"),
+    ("1,600+", "起 / 年均", "市场滥用移送\n监管与执法机构"),
+]
+for i, (num, sub, label) in enumerate(market_stats):
+    x = Inches(0.55 + i * 3.1)
+    rect(s, x, Inches(1.45), Inches(2.9), Inches(2.15), NAVY, MSO_SHAPE.ROUNDED_RECTANGLE)
+    text(s, x, Inches(1.62), Inches(2.9), Inches(0.85), num, 28, GOLD_LIGHT, bold=True, align=PP_ALIGN.CENTER)
+    text(s, x, Inches(2.5), Inches(2.9), Inches(0.4), sub, 12, WHITE, align=PP_ALIGN.CENTER)
+    text(s, x, Inches(2.92), Inches(2.9), Inches(0.6), label, 10.5, LIGHT, align=PP_ALIGN.CENTER)
+text(s, Inches(0.6), Inches(3.72), Inches(12.1), Inches(0.4), "FINRA 罚款与追缴金额（2021–2025，单位：百万美元）", 15, GOLD, bold=True)
+fines = [("2021", 97.9), ("2022", 64.4), ("2023", 103.2), ("2024", 75.6), ("2025", 99.6)]
+maxv = 110.0
+base_y = Inches(6.05)
+chart_h = Inches(1.5)
+for i, (yr, v) in enumerate(fines):
+    x = Inches(0.9 + i * 2.4)
+    h = Emu(int(chart_h * v / maxv))
+    top = Emu(int(base_y - h))
+    rect(s, x, top, Inches(1.4), h, CORAL if i == 2 else TEAL)
+    text(s, x, Emu(int(top - Inches(0.32))), Inches(1.4), Inches(0.3), str(v), 12, NAVY, bold=True, align=PP_ALIGN.CENTER)
+    text(s, x, Emu(int(base_y + Inches(0.06))), Inches(1.4), Inches(0.3), yr, 11, MUTED, align=PP_ALIGN.CENTER)
+text(s, Inches(0.6), Inches(6.55), Inches(12.1), Inches(0.5), "结论：违规高发、代价攀升——一线员工亟需「可执行的合规工具」，而非事后补救", 14, NAVY, bold=True)
+text(s, Inches(0.6), Inches(7.05), Inches(12.1), Inches(0.35), "数据来源：FINRA 官方统计（2021–2025）· 联合国毒品和犯罪问题办公室 UNODC", 10, MUTED)
+notes(s, "【40 秒】用外部权威数据证明市场：洗钱规模 1.6 万亿、FINRA 近5年纪律处分 3,490 起、罚款追缴 4.4 亿美元，且逐年高位。'违规不是个案，而是行业级、持续性的问题——所以合规工具不是锦上添花，是刚需。' 强调数据来源 FINRA 官方与 UNODC。")
+
+# ============ 7 方案概述 ============
+s = prs.slides.add_slide(BLANK)
+header(s, "06", "方案概述：一个能「执行」的合规 Agent")
 # 流程图：输入 -> Agent -> 输出
 rect(s, Inches(0.6), Inches(1.9), Inches(2.6), Inches(2.2), CARD, MSO_SHAPE.ROUNDED_RECTANGLE, line=NAVY_MID)
 text(s, Inches(0.6), Inches(2.1), Inches(2.6), Inches(1.8), "👤 员工\n一句话\n描述行为", 15, NAVY, True, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
@@ -222,7 +253,7 @@ notes(s, "【45 秒】介绍产品形态，点到为止，细节留给演示页�
 
 # ============ 7 四大能力 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "06", "Agent 四大核心能力 · 逐一落地")
+header(s, "07", "Agent 四大核心能力 · 逐一落地")
 caps = [
     ("🔍 自主感知", "口语转正式 + 9类意图识别\n关键词+正则+语义三级", CARD, NAVY_MID),
     ("🧠 分析决策", "风险评级 + 22子条款\n+ RAG案例 + 行动强度分级", CARD_TEAL, TEAL),
@@ -242,7 +273,7 @@ notes(s, "【60 秒】★核心页。'赛道要求 Agent 四大能力，我们�
 
 # ============ 8 Agent 作用 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "07", "Agent 起到了什么作用")
+header(s, "08", "Agent 起到了什么作用")
 roles = [
     ("👤 对员工", "从「凭感觉」到「有依据」\n口语转正式+申报+自证", CARD, NAVY_MID),
     ("🏛 对合规部门", "从「被动审查」到「签名审批」\n独立审查视角+回执留痕", CARD_TEAL, TEAL),
@@ -262,7 +293,7 @@ notes(s, "【45 秒】讲价值升维。'关键在任务执行——一般的 AI
 
 # ============ 9 技术架构 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "08", "技术架构：RAG 约束，结论有据可依")
+header(s, "09", "技术架构：RAG 约束，结论有据可依")
 steps = ["输入", "意图分类", "向量检索 Top-5", "结构化输出", "任务执行"]
 for i, st in enumerate(steps):
     x = Inches(0.5 + i * 2.5)
@@ -289,7 +320,7 @@ notes(s, "【50 秒】不讲技术名词，讲'为什么这么选'。'我们不�
 
 # ============ 10 现场演示 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "09", "现场演示：从识别到邮件触达的闭环")
+header(s, "10", "现场演示：从识别到邮件触达的闭环")
 demo = [
     ("输入", "客户送我去打高尔夫，还承担我出差的机票和酒店费用"),
     ("① 拦截", "高风险判定 + 红色风险拦截 + 准则 I(B)/IV(B)/VI(A)"),
@@ -309,7 +340,7 @@ notes(s, "【90 秒】★记忆点，全场最值得花时间。边操作边讲�
 
 # ============ 11 数据与实证 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "10", "数据基础与实证结果")
+header(s, "11", "数据基础与实证结果")
 stats = [("230", "道题库"), ("22", "子条款全覆盖"), ("8", "类行为"), ("161", "合规案例"), ("29", "项测试全过")]
 for i, (num, label) in enumerate(stats):
     x = Inches(0.55 + i * 2.5)
@@ -331,7 +362,7 @@ notes(s, "【45 秒】用数据证明'做得出来、测得过'。'数据来源�
 
 # ============ 12 五大挑战 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "11", "五大挑战 · 逐一工程化应对")
+header(s, "12", "五大挑战 · 逐一工程化应对")
 challenges = [
     ("模型幻觉", "RAG 约束 + 温度 0.3 + 规则引擎兜底"),
     ("数据安全", "离线优先，数据不出本机 + 私有化部署"),
@@ -350,7 +381,7 @@ notes(s, "【60 秒】★关键页，评委必问。'赛道提了五大挑战，
 
 # ============ 13 改进过程 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "12", "改进过程：从工具到 Agent 的六次迭代")
+header(s, "13", "改进过程：从工具到 Agent 的六次迭代")
 steps = [
     ("① 数据筑基", "230 题结构化"),
     ("② 感知决策", "9类分类+评级"),
@@ -374,7 +405,7 @@ notes(s, "【50 秒】呼应'持续优化'。'我们经历了六次迭代：第�
 
 # ============ 14 使用价值与可推广 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "13", "使用价值与可推广性")
+header(s, "14", "使用价值与可推广性")
 text(s, Inches(0.6), Inches(1.35), Inches(12.1), Inches(0.5), "使用价值", 16, GOLD, bold=True)
 card(s, Inches(0.6), Inches(1.9), Inches(12.1), Inches(1.2), CARD_TEAL, TEAL, [
     ("员工降风险 · 合规部降成本 · 机构建文化 —— 从「事后追责」转向「事前自检」", 15, NAVY, True),
@@ -399,7 +430,7 @@ notes(s, "【45 秒】展示想象空间。'它不止解决 CFA 合规，这套�
 
 # ============ 15 商业模式 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "14", "商业模式与落地路径")
+header(s, "15", "商业模式与落地路径")
 tiers = [
     ("个人版", "本地离线自检 · 免费", CARD),
     ("团队版", "内网部署/审计/批量 · 订阅", CARD_TEAL),
@@ -425,7 +456,7 @@ notes(s, "【35 秒】简略带过，时间留给演示和挑战应对。'商业
 
 # ============ 16 结论+团队 ============
 s = prs.slides.add_slide(BLANK)
-header(s, "15", "创新点 · 团队 · 感谢")
+header(s, "16", "创新点 · 团队 · 感谢")
 text(s, Inches(0.6), Inches(1.35), Inches(12.1), Inches(0.5), "三大创新点", 16, GOLD, bold=True)
 inns = [
     ("Agent 范式下沉", "从机构级下沉到个人合规行为辅助"),
